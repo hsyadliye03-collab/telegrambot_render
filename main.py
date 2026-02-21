@@ -993,6 +993,7 @@ async def root():
     }
 
 @app.get("/health")
+@app.head("/health")
 async def health():
     return {"status": "healthy", "version": "3.1"}
 
@@ -1000,6 +1001,6 @@ async def health():
 # 🚀 MAIN
 # =====================
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 8080))
+    port = int(os.getenv("PORT", 10000))
     print(f"🌐 Server başlatılıyor (v3.1) - Port: {port}")
     uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
