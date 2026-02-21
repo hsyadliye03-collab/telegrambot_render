@@ -952,7 +952,7 @@ async def lifespan(app: FastAPI):
     await telegram_app.initialize()
     await telegram_app.start()
 
-    webhook_url = os.getenv("WEBHOOK_URL", "https://telegram-bot-xxxx.onrender.com/webhook")
+    webhook_url = os.getenv("WEBHOOK_URL", "https://telegrambot-render-xodf.onrender.com")
     print(f"🔗 Webhook ayarlanıyor: {webhook_url}")
     try:
         await telegram_app.bot.set_webhook(url=webhook_url)
