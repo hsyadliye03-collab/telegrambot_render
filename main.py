@@ -24,10 +24,10 @@ if not TOKEN:
 SUPERGROUP_ID = -1003506180823
 
 TOPICS = {
-    "gunluk_rutin":  14,
-    "yapilacaklar":  16,
-    "aliskanlik":    17,
-    "farkindalik":   18,
+    "gunluk_rutin":  8,
+    "yapilacaklar":  5,
+    "aliskanlik":    3,
+    "farkindalik":   4,
 }
 
 # =====================
