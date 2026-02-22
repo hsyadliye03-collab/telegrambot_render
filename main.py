@@ -6,6 +6,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     ApplicationBuilder,
     CallbackQueryHandler,
+    CommandHandler,
     ContextTypes,
     MessageHandler,
     filters,
@@ -471,6 +472,25 @@ async def gece_farkindalik(context: ContextTypes.DEFAULT_TYPE):
         f"İlk soruya başlayalım:"
     )
     await send_to_topic(context, "farkindalik", mesaj, parse_mode="Markdown",
+
+    async def test_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    mesaj = (
+        "✅ *Bot aktif ve çalışıyor!*\n\n"
+        "🤖 Sistem durumu: Normal\n"
+        "📡 Webhook: Bağlı\n"
+        "⏰ Zamanlı görevler: Aktif\n\n"
+        "━━━━━━━━━━━━━━━━━━━━━━\n"
+        "📌 *Günlük program:*\n"
+        "• 07:00 — Sabah rutini\n"
+        "• 11:00 — Öğlen kitap kontrolü\n"
+        "• 18:00 — Akşam alışkanlık\n"
+        "• 20:00 — Ezber kontrolü\n"
+        "• 22:00 — Gece farkındalık & Yapılacaklar planı\n"
+        "• 22:30 — Günlük rapor\n\n"
+        "Saati geldiğinde mesajlar otomatik gelecek! 💪"
+    )
+    await update.message.reply_text(mesaj, parse_mode="Markdown")
+    
                         reply_markup=farkindalik_buton("en_iyi_sey", "Son 24 saatte en iyi yaptığım şey?"))
 
 async def gunluk_yapilacaklar_planla(context: ContextTypes.DEFAULT_TYPE):
@@ -947,6 +967,7 @@ async def lifespan(app: FastAPI):
     jq.run_daily(haftalik_yapilacaklar_rapor,  time(17, 0), days=(4,))  # 20:00 TRT Cuma
 
     telegram_app.add_handler(CallbackQueryHandler(button_handler))
+    telegram_app.add_handler(CommandHandler("test", test_komutu))
     telegram_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_handler))
 
     await telegram_app.initialize()
