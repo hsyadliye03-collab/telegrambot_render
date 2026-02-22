@@ -472,8 +472,9 @@ async def gece_farkindalik(context: ContextTypes.DEFAULT_TYPE):
         f"İlk soruya başlayalım:"
     )
     await send_to_topic(context, "farkindalik", mesaj, parse_mode="Markdown",
+                        reply_markup=farkindalik_buton("en_iyi_sey", "Son 24 saatte en iyi yaptığım şey?"))
 
-    async def test_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def test_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     mesaj = (
         "✅ *Bot aktif ve çalışıyor!*\n\n"
         "🤖 Sistem durumu: Normal\n"
