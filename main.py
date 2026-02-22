@@ -259,7 +259,6 @@ def set_gunluk_yapilacaklar(context, liste):
     context.bot_data["gunluk_yapilacaklar"] = liste
 
 def get_gunluk_tamamlanan(context):
-    # Her zaman AYNI dict referansını döndürür — asla sıfırdan oluşturmaz
     if "gunluk_tamamlanan" not in context.bot_data:
         context.bot_data["gunluk_tamamlanan"] = {}
     return context.bot_data["gunluk_tamamlanan"]
@@ -274,7 +273,6 @@ def set_haftalik_yapilacaklar(context, liste):
     context.bot_data["haftalik_yapilacaklar"] = liste
 
 def get_haftalik_tamamlanan(context):
-    # Her zaman AYNI dict referansını döndürür — asla sıfırdan oluşturmaz
     if "haftalik_tamamlanan" not in context.bot_data:
         context.bot_data["haftalik_tamamlanan"] = {}
     return context.bot_data["haftalik_tamamlanan"]
@@ -326,11 +324,6 @@ def yapilacak_kontrol_buttons(is_haftalik=False):
     ])
 
 def yapilacak_detay_buttons(liste: list, tamamlanan: dict, is_haftalik=False):
-    """
-    Her görev için ✅/❌ butonu gösterir.
-    Daha önce işaretlenenler (seçili) olarak görünür.
-    Altta "📊 Raporu Tamamla" butonu var — kullanıcı istediği zaman basar.
-    """
     prefix = "hafta_" if is_haftalik else ""
     buttons = []
     for i, gorev in enumerate(liste):
@@ -474,26 +467,6 @@ async def gece_farkindalik(context: ContextTypes.DEFAULT_TYPE):
     await send_to_topic(context, "farkindalik", mesaj, parse_mode="Markdown",
                         reply_markup=farkindalik_buton("en_iyi_sey", "Son 24 saatte en iyi yaptığım şey?"))
 
-async def test_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    mesaj = (
-        "✅ *Bot aktif ve çalışıyor!*\n\n"
-        "🤖 Sistem durumu: Normal\n"
-        "📡 Webhook: Bağlı\n"
-        "⏰ Zamanlı görevler: Aktif\n\n"
-        "━━━━━━━━━━━━━━━━━━━━━━\n"
-        "📌 *Günlük program:*\n"
-        "• 07:00 — Sabah rutini\n"
-        "• 11:00 — Öğlen kitap kontrolü\n"
-        "• 18:00 — Akşam alışkanlık\n"
-        "• 20:00 — Ezber kontrolü\n"
-        "• 22:00 — Gece farkındalık & Yapılacaklar planı\n"
-        "• 22:30 — Günlük rapor\n\n"
-        "Saati geldiğinde mesajlar otomatik gelecek! 💪"
-    )
-    await update.message.reply_text(mesaj, parse_mode="Markdown")
-    
-                        reply_markup=farkindalik_buton("en_iyi_sey", "Son 24 saatte en iyi yaptığım şey?"))
-
 async def gunluk_yapilacaklar_planla(context: ContextTypes.DEFAULT_TYPE):
     set_gunluk_yapilacaklar(context, [])
     reset_gunluk_tamamlanan(context)
@@ -632,6 +605,24 @@ async def weekly_report(context: ContextTypes.DEFAULT_TYPE):
     )
     await send_to_topic(context, "farkindalik", mesaj, parse_mode="Markdown")
 
+async def test_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    mesaj = (
+        "✅ *Bot aktif ve çalışıyor!*\n\n"
+        "🤖 Sistem durumu: Normal\n"
+        "📡 Webhook: Bağlı\n"
+        "⏰ Zamanlı görevler: Aktif\n\n"
+        "━━━━━━━━━━━━━━━━━━━━━━\n"
+        "📌 *Günlük program:*\n"
+        "• 07:00 — Sabah rutini\n"
+        "• 11:00 — Öğlen kitap kontrolü\n"
+        "• 18:00 — Akşam alışkanlık\n"
+        "• 20:00 — Ezber kontrolü\n"
+        "• 22:00 — Gece farkındalık & Yapılacaklar planı\n"
+        "• 22:30 — Günlük rapor\n\n"
+        "Saati geldiğinde mesajlar otomatik gelecek! 💪"
+    )
+    await update.message.reply_text(mesaj, parse_mode="Markdown")
+
 # =====================
 # 🔔 BUTON HANDLER
 # =====================
@@ -745,7 +736,6 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 set_gunluk_yapilacaklar(context, [])
 
         elif kontrol_tip == "kismen":
-            # Tamamlananı temizle, detay butonlarını göster
             if is_haftalik:
                 reset_haftalik_tamamlanan(context)
             else:
@@ -790,14 +780,13 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # ── Detay: tek tek işaretleme ─────────────────────────────
     if data.startswith(prefix + "detay_"):
         parts = data.split("_")
-        result = parts[-1]          # "yes" veya "no"
+        result = parts[-1]
         gorev_index = int(parts[-2])
         liste = get_haftalik_yapilacaklar(context) if is_haftalik else get_gunluk_yapilacaklar(context)
         tamamlanan = get_haftalik_tamamlanan(context) if is_haftalik else get_gunluk_tamamlanan(context)
 
         if result in ("yes", "no"):
             tamamlanan[gorev_index] = "✅" if result == "yes" else "❌"
-            # Butonu güncel haliyle yenile (seçim göster)
             mesaj = "Hangilerini yaptın? Tümünü işaretle, sonra 📊 Raporu Tamamla'ya bas:\n\n"
             for i, gorev in enumerate(liste, 1):
                 mesaj += f"{i}. {gorev}\n"
@@ -955,17 +944,17 @@ async def lifespan(app: FastAPI):
     jq = telegram_app.job_queue
 
     # UTC saatleri — Türkiye UTC+3
-    jq.run_daily(sabah_rutin,                  time(4, 0))              # 07:00 TRT
-    jq.run_daily(ogle_kontrol,                 time(8, 0))              # 11:00 TRT
-    jq.run_daily(aksam_aliskanlik,             time(15, 0))             # 18:00 TRT
-    jq.run_daily(aksam_ezber_kontrol,          time(17, 0))             # 20:00 TRT
-    jq.run_daily(gece_farkindalik,             time(19, 0))             # 22:00 TRT
-    jq.run_daily(daily_report,                 time(19, 30))            # 22:30 TRT
-    jq.run_daily(gunluk_yapilacaklar_planla,   time(19, 0))             # 22:00 TRT
-    jq.run_daily(gunluk_yapilacaklar_kontrol,  time(17, 0))             # 20:00 TRT
-    jq.run_daily(haftalik_yapilacaklar_planla, time(16, 0), days=(5,))  # 19:00 TRT Cumartesi
-    jq.run_daily(haftalik_ezber_planla,        time(16, 30), days=(5,)) # 19:30 TRT Cumartesi
-    jq.run_daily(haftalik_yapilacaklar_rapor,  time(17, 0), days=(4,))  # 20:00 TRT Cuma
+    jq.run_daily(sabah_rutin,                  time(4, 0))
+    jq.run_daily(ogle_kontrol,                 time(8, 0))
+    jq.run_daily(aksam_aliskanlik,             time(15, 0))
+    jq.run_daily(aksam_ezber_kontrol,          time(17, 0))
+    jq.run_daily(gece_farkindalik,             time(19, 0))
+    jq.run_daily(daily_report,                 time(19, 30))
+    jq.run_daily(gunluk_yapilacaklar_planla,   time(19, 0))
+    jq.run_daily(gunluk_yapilacaklar_kontrol,  time(17, 0))
+    jq.run_daily(haftalik_yapilacaklar_planla, time(16, 0), days=(5,))
+    jq.run_daily(haftalik_ezber_planla,        time(16, 30), days=(5,))
+    jq.run_daily(haftalik_yapilacaklar_rapor,  time(17, 0), days=(4,))
 
     telegram_app.add_handler(CallbackQueryHandler(button_handler))
     telegram_app.add_handler(CommandHandler("test", test_komutu))
@@ -1010,19 +999,19 @@ async def root():
     return {
         "status": "running",
         "bot": "active",
-        "version": "3.1 - Detay buton fix",
+        "version": "3.2 - Test komutu eklendi",
         "message": "Telegram Bot çalışıyor! 🚀"
     }
 
 @app.get("/health")
 @app.head("/health")
 async def health():
-    return {"status": "healthy", "version": "3.1"}
+    return {"status": "healthy", "version": "3.2"}
 
 # =====================
 # 🚀 MAIN
 # =====================
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 10000))
-    print(f"🌐 Server başlatılıyor (v3.1) - Port: {port}")
+    print(f"🌐 Server başlatılıyor (v3.2) - Port: {port}")
     uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
