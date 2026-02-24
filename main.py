@@ -442,8 +442,14 @@ async def aksam_aliskanlik(context: ContextTypes.DEFAULT_TYPE):
                         reply_markup=yes_no_buttons("aliskanlik_sadik"))
 
 async def aksam_ezber_kontrol(context: ContextTypes.DEFAULT_TYPE):
+    """
+    Haftalık ezber planı varsa günlük takip mesajı gönderir.
+    Topic: gunluk_rutin (thread_id=8)
+    TR 20:00 = UTC 17:00
+    """
     plan = get_haftalik_ezber_plan(context)
     if not plan.strip():
+        # Plan girilmemişse sessizce çık — bu normal davranış
         return
     mesaj = (
         "🧠 *HAFTALIK EZBER KONTROLÜ*\n\n"
@@ -612,12 +618,14 @@ async def test_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "📡 Webhook: Bağlı\n"
         "⏰ Zamanlı görevler: Aktif\n\n"
         "━━━━━━━━━━━━━━━━━━━━━━\n"
-        "📌 *Günlük program:*\n"
+        "📌 *Günlük program (TR saati):*\n"
         "• 07:00 — Sabah rutini\n"
         "• 11:00 — Öğlen kitap kontrolü\n"
+        "• 18:00 — Günlük yapılacaklar kontrolü\n"
         "• 18:00 — Akşam alışkanlık\n"
         "• 20:00 — Ezber kontrolü\n"
-        "• 22:00 — Gece farkındalık & Yapılacaklar planı\n"
+        "• 22:00 — Gece farkındalık\n"
+        "• 22:30 — Günlük yapılacaklar planı\n"
         "• 22:30 — Günlük rapor\n\n"
         "Saati geldiğinde mesajlar otomatik gelecek! 💪"
     )
@@ -943,18 +951,33 @@ async def lifespan(app: FastAPI):
 
     jq = telegram_app.job_queue
 
-    # UTC saatleri — Türkiye UTC+3
+    # =====================================================================
+    # ⏰ ZAMANLAMA TABLOSU (UTC → TR saati = UTC + 3)
+    # ─────────────────────────────────────────────────────────────────────
+    # UTC 04:00  → TR 07:00  | Sabah rutini
+    # UTC 08:00  → TR 11:00  | Öğlen kitap kontrolü
+    # UTC 15:10  → TR 18:10  | Günlük yapılacaklar kontrolü
+    # UTC 15:00  → TR 18:00  | Akşam alışkanlık takibi
+    # UTC 17:00  → TR 20:00  | Ezber kontrolü (plan boşsa mesaj gelmez)
+    # UTC 17:30  → TR 20:30  | Gece farkındalık
+    # UTC 19:30  → TR 22:30  | Günlük yapılacaklar planı (yarın için)
+    # UTC 19:40  → TR 22:40  | Günlük rapor
+    # UTC 16:00  → TR 19:00  | Haftalık yapılacaklar planı (Cumartesi)
+    # UTC 16:30  → TR 19:30  | Haftalık ezber planı (Cumartesi)
+    # UTC 17:00  → TR 20:00  | Haftalık yapılacaklar raporu (Cuma)
+    # =====================================================================
+
     jq.run_daily(sabah_rutin,                  time(4, 0))
     jq.run_daily(ogle_kontrol,                 time(8, 0))
-    jq.run_daily(aksam_aliskanlik,             time(15, 0))
-    jq.run_daily(aksam_ezber_kontrol,          time(17, 0))
-    jq.run_daily(gece_farkindalik,             time(19, 0))
-    jq.run_daily(daily_report,                 time(19, 30))
-    jq.run_daily(gunluk_yapilacaklar_planla,   time(19, 0))
-    jq.run_daily(gunluk_yapilacaklar_kontrol,  time(17, 0))
-    jq.run_daily(haftalik_yapilacaklar_planla, time(16, 0), days=(5,))
-    jq.run_daily(haftalik_ezber_planla,        time(16, 30), days=(5,))
-    jq.run_daily(haftalik_yapilacaklar_rapor,  time(17, 0), days=(4,))
+    jq.run_daily(gunluk_yapilacaklar_kontrol,  time(15, 10))   # TR 18:10 — çakışma giderildi
+    jq.run_daily(aksam_aliskanlik,             time(15, 0))   # TR 18:00
+    jq.run_daily(aksam_ezber_kontrol,          time(17, 0))   # TR 20:00
+    jq.run_daily(gece_farkindalik,             time(17, 30))   # TR 20:30
+    jq.run_daily(gunluk_yapilacaklar_planla,   time(19, 30))  # TR 22:30 — çakışma giderildi
+    jq.run_daily(daily_report,                 time(19, 40))  # TR 22:40
+    jq.run_daily(haftalik_yapilacaklar_planla, time(16, 0),  days=(5,))  # Cumartesi TR 19:00
+    jq.run_daily(haftalik_ezber_planla,        time(16, 30), days=(5,))  # Cumartesi TR 19:30
+    jq.run_daily(haftalik_yapilacaklar_rapor,  time(17, 0),  days=(4,))  # Cuma TR 20:00
 
     telegram_app.add_handler(CallbackQueryHandler(button_handler))
     telegram_app.add_handler(CommandHandler("test", test_komutu))
@@ -999,19 +1022,19 @@ async def root():
     return {
         "status": "running",
         "bot": "active",
-        "version": "3.2 - Test komutu eklendi",
+        "version": "3.3 - Saat düzenlemeleri ve ezber fix",
         "message": "Telegram Bot çalışıyor! 🚀"
     }
 
 @app.get("/health")
 @app.head("/health")
 async def health():
-    return {"status": "healthy", "version": "3.2"}
+    return {"status": "healthy", "version": "3.3"}
 
 # =====================
 # 🚀 MAIN
 # =====================
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 10000))
-    print(f"🌐 Server başlatılıyor (v3.2) - Port: {port}")
+    print(f"🌐 Server başlatılıyor (v3.3) - Port: {port}")
     uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
