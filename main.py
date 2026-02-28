@@ -1,6 +1,7 @@
 import os
 import random
 import asyncio
+import aiohttp
 from datetime import time
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
@@ -30,6 +31,14 @@ TOPICS = {
     "aliskanlik":    3,
     "farkindalik":   4,
 }
+
+# =====================
+# 🔑 RENDER & UPTIMEROBOT API
+# =====================
+RENDER_API_KEY         = os.getenv("RENDER_API_KEY", "")
+RENDER_SERVICE_ID      = os.getenv("RENDER_SERVICE_ID", "")
+UPTIMEROBOT_API_KEY    = os.getenv("UPTIMEROBOT_API_KEY", "")
+UPTIMEROBOT_MONITOR_ID = os.getenv("UPTIMEROBOT_MONITOR_ID", "")
 
 # =====================
 # 🌅 SABAH KARŞILAMA MESAJLARI
@@ -98,6 +107,12 @@ OLUMLU_CEVAPLAR = {
         "🌟 Elhamdülillah! Bereketli bir gün olacak.",
         "💎 Allah kabul etsin! Yasin okuyan gönül rahatlar.",
         "🕌 Mükemmel! Manevi gücün arttı bugün.",
+    ],
+    "cevsen": [
+        "📿 Maşallah! Cevşen'in nuru kalbine dolsun!",
+        "🌟 Elhamdülillah! 15 bab Cevşen büyük bir bereket!",
+        "💎 Allah kabul etsin! Cevşen okuyan gönül güçlenir.",
+        "🕌 Mükemmel! Manevi zırhını kuşandın bugün!",
     ],
     "sinav": [
         "💪 Kartal gibi! \"Sağlam kafa sağlam vücutta bulunur!\"",
@@ -194,8 +209,8 @@ def get_daily_status(context: ContextTypes.DEFAULT_TYPE):
 def _empty_daily():
     return {
         "uyandi": None, "namaz": None, "kitap_sabah": None, "yasin": None,
-        "sinav": None, "mekik": None, "telefon": None, "hedef": None,
-        "kitap_ogle": None, "ogrendigi": "",
+        "cevsen": None, "sinav": None, "mekik": None, "telefon": None,
+        "hedef": None, "kitap_ogle": None, "ogrendigi": "",
         "aliskanlik_sadik": None, "zor_yapilan": "", "erteleme": None,
         "en_iyi_sey": "", "daha_iyi_sey": "", "ogrendigi_gece": "", "ek_cevap": "",
         "ezber_yaptim": None,
@@ -356,6 +371,30 @@ async def send_to_topic(context, topic_key: str, text: str, parse_mode=None, rep
     return await context.bot.send_message(**kwargs)
 
 # =====================
+# 😴 RENDER SUSPEND FONKSİYONU
+# =====================
+async def render_suspend(context: ContextTypes.DEFAULT_TYPE):
+    """Gece TR 00:30 (UTC 21:30) — botu Render üzerinden suspend eder."""
+    if not RENDER_API_KEY or not RENDER_SERVICE_ID:
+        print("⚠️ RENDER_API_KEY veya RENDER_SERVICE_ID eksik, suspend yapılamadı.")
+        return
+    url = f"https://api.render.com/v1/services/{RENDER_SERVICE_ID}/suspend"
+    headers = {
+        "Accept": "application/json",
+        "Authorization": f"Bearer {RENDER_API_KEY}",
+    }
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, headers=headers) as resp:
+                if resp.status in (200, 201, 204):
+                    print("✅ Bot suspend edildi. İyi geceler! 🌙")
+                else:
+                    text = await resp.text()
+                    print(f"❌ Suspend hatası: {resp.status} — {text}")
+    except Exception as e:
+        print(f"❌ Suspend isteği gönderilemedi: {e}")
+
+# =====================
 # ⏰ GÖREV FONKSİYONLARI
 # =====================
 async def sabah_rutin(context: ContextTypes.DEFAULT_TYPE):
@@ -388,6 +427,13 @@ async def ask_yasin(context, chat_id, thread_id):
         chat_id=chat_id, message_thread_id=thread_id,
         text="📿 Yasin okudun mu?",
         reply_markup=yes_no_buttons("yasin")
+    )
+
+async def ask_cevsen(context, chat_id, thread_id):
+    await context.bot.send_message(
+        chat_id=chat_id, message_thread_id=thread_id,
+        text="📖 Bugün 15 bab Cevşen okudun mu?",
+        reply_markup=yes_no_buttons("cevsen")
     )
 
 async def ask_sinav(context, chat_id, thread_id):
@@ -442,14 +488,8 @@ async def aksam_aliskanlik(context: ContextTypes.DEFAULT_TYPE):
                         reply_markup=yes_no_buttons("aliskanlik_sadik"))
 
 async def aksam_ezber_kontrol(context: ContextTypes.DEFAULT_TYPE):
-    """
-    Haftalık ezber planı varsa günlük takip mesajı gönderir.
-    Topic: gunluk_rutin (thread_id=8)
-    TR 20:00 = UTC 17:00
-    """
     plan = get_haftalik_ezber_plan(context)
     if not plan.strip():
-        # Plan girilmemişse sessizce çık — bu normal davranış
         return
     mesaj = (
         "🧠 *HAFTALIK EZBER KONTROLÜ*\n\n"
@@ -548,7 +588,7 @@ async def haftalik_yapilacaklar_rapor(context: ContextTypes.DEFAULT_TYPE):
 async def daily_report(context: ContextTypes.DEFAULT_TYPE):
     daily = get_daily_status(context)
     butonlu_keys = [
-        "uyandi", "namaz", "kitap_sabah", "yasin", "sinav", "mekik",
+        "uyandi", "namaz", "kitap_sabah", "yasin", "cevsen", "sinav", "mekik",
         "telefon", "hedef", "kitap_ogle", "aliskanlik_sadik", "erteleme",
         "ezber_yaptim"
     ]
@@ -565,6 +605,7 @@ async def daily_report(context: ContextTypes.DEFAULT_TYPE):
         f"• Sabah Namazı: {daily.get('namaz') or '—'}\n"
         f"• 5 Sayfa Kitap: {daily.get('kitap_sabah') or '—'}\n"
         f"• Yasin: {daily.get('yasin') or '—'}\n"
+        f"• 15 Bab Cevşen: {daily.get('cevsen') or '—'}\n"
         f"• 20 Şınav: {daily.get('sinav') or '—'}\n"
         f"• 20 Mekik: {daily.get('mekik') or '—'}\n"
         f"• Telefonsuz 30dk: {daily.get('telefon') or '—'}\n"
@@ -611,6 +652,9 @@ async def weekly_report(context: ContextTypes.DEFAULT_TYPE):
     )
     await send_to_topic(context, "farkindalik", mesaj, parse_mode="Markdown")
 
+# =====================
+# 📌 SLASH KOMUTLARI
+# =====================
 async def test_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     mesaj = (
         "✅ *Bot aktif ve çalışıyor!*\n\n"
@@ -621,14 +665,54 @@ async def test_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "📌 *Günlük program (TR saati):*\n"
         "• 07:00 — Sabah rutini\n"
         "• 11:00 — Öğlen kitap kontrolü\n"
-        "• 18:00 — Günlük yapılacaklar kontrolü\n"
-        "• 18:00 — Akşam alışkanlık\n"
+        "• 18:00 — Akşam alışkanlık takibi\n"
+        "• 18:10 — Günlük yapılacaklar kontrolü\n"
         "• 20:00 — Ezber kontrolü\n"
-        "• 22:00 — Gece farkındalık\n"
+        "• 20:30 — Gece farkındalık\n"
         "• 22:30 — Günlük yapılacaklar planı\n"
-        "• 22:30 — Günlük rapor\n\n"
+        "• 22:40 — Günlük rapor\n"
+        "• 00:30 — Bot kapanır 🌙\n\n"
         "Saati geldiğinde mesajlar otomatik gelecek! 💪"
     )
+    await update.message.reply_text(mesaj, parse_mode="Markdown")
+
+async def bilgi_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    mesaj = (
+        "📌 *Kullanılabilir Komutlar:*\n\n"
+        "/test — Botun çalışıp çalışmadığını kontrol eder\n"
+        "/gunluk — Günlük yapılacaklar listesini gösterir\n"
+        "/haftalik — Haftalık yapılacaklar listesini gösterir\n"
+        "/ezber — Haftalık ezber metnini gösterir\n"
+        "/bilgi — Bu yardım mesajını gösterir"
+    )
+    await update.message.reply_text(mesaj, parse_mode="Markdown")
+
+async def gunluk_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    liste = get_gunluk_yapilacaklar(context)
+    if not liste:
+        await update.message.reply_text("📋 Henüz günlük yapılacaklar listesi oluşturulmamış.")
+        return
+    mesaj = "📋 *GÜNLÜK YAPILACAKLAR*\n\n"
+    for i, gorev in enumerate(liste, 1):
+        mesaj += f"{i}. {gorev}\n"
+    await update.message.reply_text(mesaj, parse_mode="Markdown")
+
+async def haftalik_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    liste = get_haftalik_yapilacaklar(context)
+    if not liste:
+        await update.message.reply_text("📅 Henüz haftalık yapılacaklar listesi oluşturulmamış.")
+        return
+    mesaj = "📅 *HAFTALIK YAPILACAKLAR*\n\n"
+    for i, gorev in enumerate(liste, 1):
+        mesaj += f"{i}. {gorev}\n"
+    await update.message.reply_text(mesaj, parse_mode="Markdown")
+
+async def ezber_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    plan = get_haftalik_ezber_plan(context)
+    if not plan.strip():
+        await update.message.reply_text("📜 Henüz haftalık ezber metni girilmemiş.")
+        return
+    mesaj = f"📜 *HAFTALIK EZBER METNİ*\n\n{plan}"
     await update.message.reply_text(mesaj, parse_mode="Markdown")
 
 # =====================
@@ -641,6 +725,17 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     daily = get_daily_status(context)
     chat_id = query.message.chat_id
     thread_id = query.message.message_thread_id
+
+    # ── Cevşen butonları ─────────────────────────────────────
+    if data == "cevsen_yes":
+        daily["cevsen"] = "✅"
+        await query.edit_message_text(random.choice(OLUMLU_CEVAPLAR["cevsen"]))
+        return
+
+    if data == "cevsen_no":
+        daily["cevsen"] = "❌"
+        await query.edit_message_text(random.choice(OLUMSUZ_CEVAPLAR))
+        return
 
     # ── Ezber butonları ──────────────────────────────────────
     if data == "ezber_yaptim_yes":
@@ -827,6 +922,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif key == "kitap_sabah":
         await ask_yasin(context, chat_id, thread_id)
     elif key == "yasin":
+        await ask_cevsen(context, chat_id, thread_id)
+    elif key == "cevsen":
         await ask_sinav(context, chat_id, thread_id)
     elif key == "sinav":
         await ask_mekik(context, chat_id, thread_id)
@@ -962,6 +1059,7 @@ async def lifespan(app: FastAPI):
     # UTC 17:30  → TR 20:30  | Gece farkındalık
     # UTC 19:30  → TR 22:30  | Günlük yapılacaklar planı (yarın için)
     # UTC 19:40  → TR 22:40  | Günlük rapor
+    # UTC 21:30  → TR 00:30  | Bot kapanır (suspend)
     # UTC 16:00  → TR 19:00  | Haftalık yapılacaklar planı (Cumartesi)
     # UTC 16:30  → TR 19:30  | Haftalık ezber planı (Cumartesi)
     # UTC 17:00  → TR 20:00  | Haftalık yapılacaklar raporu (Cuma)
@@ -969,18 +1067,23 @@ async def lifespan(app: FastAPI):
 
     jq.run_daily(sabah_rutin,                  time(4, 0))
     jq.run_daily(ogle_kontrol,                 time(8, 0))
-    jq.run_daily(gunluk_yapilacaklar_kontrol,  time(15, 10))   # TR 18:10 — çakışma giderildi
+    jq.run_daily(gunluk_yapilacaklar_kontrol,  time(15, 10))  # TR 18:10
     jq.run_daily(aksam_aliskanlik,             time(15, 0))   # TR 18:00
     jq.run_daily(aksam_ezber_kontrol,          time(17, 0))   # TR 20:00
-    jq.run_daily(gece_farkindalik,             time(17, 30))   # TR 20:30
-    jq.run_daily(gunluk_yapilacaklar_planla,   time(19, 30))  # TR 22:30 — çakışma giderildi
+    jq.run_daily(gece_farkindalik,             time(17, 30))  # TR 20:30
+    jq.run_daily(gunluk_yapilacaklar_planla,   time(19, 30))  # TR 22:30
     jq.run_daily(daily_report,                 time(19, 40))  # TR 22:40
+    jq.run_daily(render_suspend,               time(21, 30))  # TR 00:30 — bot kapanır
     jq.run_daily(haftalik_yapilacaklar_planla, time(16, 0),  days=(5,))  # Cumartesi TR 19:00
     jq.run_daily(haftalik_ezber_planla,        time(16, 30), days=(5,))  # Cumartesi TR 19:30
     jq.run_daily(haftalik_yapilacaklar_rapor,  time(17, 0),  days=(4,))  # Cuma TR 20:00
 
     telegram_app.add_handler(CallbackQueryHandler(button_handler))
     telegram_app.add_handler(CommandHandler("test", test_komutu))
+    telegram_app.add_handler(CommandHandler("bilgi", bilgi_komutu))
+    telegram_app.add_handler(CommandHandler("gunluk", gunluk_komutu))
+    telegram_app.add_handler(CommandHandler("haftalik", haftalik_komutu))
+    telegram_app.add_handler(CommandHandler("ezber", ezber_komutu))
     telegram_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_handler))
 
     await telegram_app.initialize()
@@ -1022,19 +1125,19 @@ async def root():
     return {
         "status": "running",
         "bot": "active",
-        "version": "3.3 - Saat düzenlemeleri ve ezber fix",
+        "version": "3.5 - Cevsen butonu, slash komutlar, otomatik suspend",
         "message": "Telegram Bot çalışıyor! 🚀"
     }
 
 @app.get("/health")
 @app.head("/health")
 async def health():
-    return {"status": "healthy", "version": "3.3"}
+    return {"status": "healthy", "version": "3.5"}
 
 # =====================
 # 🚀 MAIN
 # =====================
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 10000))
-    print(f"🌐 Server başlatılıyor (v3.3) - Port: {port}")
+    print(f"🌐 Server başlatılıyor (v3.5) - Port: {port}")
     uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
