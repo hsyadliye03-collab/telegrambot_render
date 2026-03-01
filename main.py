@@ -355,6 +355,27 @@ def yapilacak_detay_buttons(liste: list, tamamlanan: dict, is_haftalik=False):
     return InlineKeyboardMarkup(buttons)
 
 # =====================
+# 🔘 YENİ: BOŞ LİSTE / EZBER UYARI BUTONLARI
+# =====================
+def gunluk_bos_buttons():
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("➕ Yenisini Oluştur", callback_data="gunluk_olustur")],
+        [InlineKeyboardButton("❌ Kapat", callback_data="slash_kapat")]
+    ])
+
+def haftalik_bos_buttons():
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("➕ Yenisini Oluştur", callback_data="haftalik_olustur")],
+        [InlineKeyboardButton("❌ Kapat", callback_data="slash_kapat")]
+    ])
+
+def ezber_bos_buttons():
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("➕ Yenisini Oluştur", callback_data="ezber_olustur")],
+        [InlineKeyboardButton("❌ Kapat", callback_data="slash_kapat")]
+    ])
+
+# =====================
 # 📨 YARDIMCI: Konuya mesaj gönder
 # =====================
 async def send_to_topic(context, topic_key: str, text: str, parse_mode=None, reply_markup=None):
@@ -690,7 +711,13 @@ async def bilgi_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def gunluk_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     liste = get_gunluk_yapilacaklar(context)
     if not liste:
-        await update.message.reply_text("📋 Henüz günlük yapılacaklar listesi oluşturulmamış.")
+        await update.message.reply_text(
+            "📋 *GÜNLÜK YAPILACAKLAR*\n\n"
+            "⚠️ Henüz günlük yapılacaklar listesi oluşturulmamış!\n\n"
+            "Yeni bir liste oluşturmak ister misin?",
+            parse_mode="Markdown",
+            reply_markup=gunluk_bos_buttons()
+        )
         return
     mesaj = "📋 *GÜNLÜK YAPILACAKLAR*\n\n"
     for i, gorev in enumerate(liste, 1):
@@ -700,7 +727,13 @@ async def gunluk_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def haftalik_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     liste = get_haftalik_yapilacaklar(context)
     if not liste:
-        await update.message.reply_text("📅 Henüz haftalık yapılacaklar listesi oluşturulmamış.")
+        await update.message.reply_text(
+            "📅 *HAFTALIK YAPILACAKLAR*\n\n"
+            "⚠️ Henüz haftalık yapılacaklar listesi oluşturulmamış!\n\n"
+            "Yeni bir liste oluşturmak ister misin?",
+            parse_mode="Markdown",
+            reply_markup=haftalik_bos_buttons()
+        )
         return
     mesaj = "📅 *HAFTALIK YAPILACAKLAR*\n\n"
     for i, gorev in enumerate(liste, 1):
@@ -710,7 +743,13 @@ async def haftalik_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def ezber_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     plan = get_haftalik_ezber_plan(context)
     if not plan.strip():
-        await update.message.reply_text("📜 Henüz haftalık ezber metni girilmemiş.")
+        await update.message.reply_text(
+            "📜 *HAFTALIK EZBER*\n\n"
+            "⚠️ Henüz haftalık ezber metni eklenmemiş!\n\n"
+            "Yeni bir ezber metni oluşturmak ister misin?",
+            parse_mode="Markdown",
+            reply_markup=ezber_bos_buttons()
+        )
         return
     mesaj = f"📜 *HAFTALIK EZBER METNİ*\n\n{plan}"
     await update.message.reply_text(mesaj, parse_mode="Markdown")
@@ -725,6 +764,51 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     daily = get_daily_status(context)
     chat_id = query.message.chat_id
     thread_id = query.message.message_thread_id
+
+    # ── Kapat butonu ─────────────────────────────────────────
+    if data == "slash_kapat":
+        await query.edit_message_reply_markup(reply_markup=None)
+        return
+
+    # ── Günlük liste oluştur ─────────────────────────────────
+    if data == "gunluk_olustur":
+        set_gunluk_yapilacaklar(context, [])
+        reset_gunluk_tamamlanan(context)
+        await query.edit_message_text(
+            "📋 *GÜNLÜK YAPILACAKLAR PLANLAMA*\n\n"
+            "Yapmayı planladığın görevleri ekle!\n\n"
+            "📝 Mevcut Liste: (Boş)\n\n"
+            "[➕ Görev Ekle] butonuna bas",
+            parse_mode="Markdown",
+            reply_markup=yapilacak_ekle_buttons(0, is_haftalik=False)
+        )
+        return
+
+    # ── Haftalık liste oluştur ───────────────────────────────
+    if data == "haftalik_olustur":
+        set_haftalik_yapilacaklar(context, [])
+        reset_haftalik_tamamlanan(context)
+        await query.edit_message_text(
+            "📅 *HAFTALIK YAPILACAKLAR PLANLAMA*\n\n"
+            "Bu hafta mutlaka yapılacak görevleri ekle!\n\n"
+            "📝 Mevcut Liste: (Boş)\n\n"
+            "[➕ Görev Ekle] butonuna bas",
+            parse_mode="Markdown",
+            reply_markup=yapilacak_ekle_buttons(0, is_haftalik=True)
+        )
+        return
+
+    # ── Ezber metni oluştur ──────────────────────────────────
+    if data == "ezber_olustur":
+        set_waiting_for(context, chat_id, "hafta_ezber_plan")
+        await query.edit_message_text(
+            "📜 *YENİ EZBER METNİ*\n\n"
+            "Ezberlemek istediğin metni yaz:\n"
+            "(şiir, kıta, hadis, atasözü vs.)\n\n"
+            "💬 Cevabını yaz:",
+            parse_mode="Markdown"
+        )
+        return
 
     # ── Cevşen butonları ─────────────────────────────────────
     if data == "cevsen_yes":
@@ -1048,35 +1132,18 @@ async def lifespan(app: FastAPI):
 
     jq = telegram_app.job_queue
 
-    # =====================================================================
-    # ⏰ ZAMANLAMA TABLOSU (UTC → TR saati = UTC + 3)
-    # ─────────────────────────────────────────────────────────────────────
-    # UTC 04:00  → TR 07:00  | Sabah rutini
-    # UTC 08:00  → TR 11:00  | Öğlen kitap kontrolü
-    # UTC 15:10  → TR 18:10  | Günlük yapılacaklar kontrolü
-    # UTC 15:00  → TR 18:00  | Akşam alışkanlık takibi
-    # UTC 17:00  → TR 20:00  | Ezber kontrolü (plan boşsa mesaj gelmez)
-    # UTC 17:30  → TR 20:30  | Gece farkındalık
-    # UTC 19:30  → TR 22:30  | Günlük yapılacaklar planı (yarın için)
-    # UTC 19:40  → TR 22:40  | Günlük rapor
-    # UTC 21:30  → TR 00:30  | Bot kapanır (suspend)
-    # UTC 16:00  → TR 19:00  | Haftalık yapılacaklar planı (Cumartesi)
-    # UTC 16:30  → TR 19:30  | Haftalık ezber planı (Cumartesi)
-    # UTC 17:00  → TR 20:00  | Haftalık yapılacaklar raporu (Cuma)
-    # =====================================================================
-
     jq.run_daily(sabah_rutin,                  time(4, 0))
     jq.run_daily(ogle_kontrol,                 time(8, 0))
-    jq.run_daily(gunluk_yapilacaklar_kontrol,  time(15, 10))  # TR 18:10
-    jq.run_daily(aksam_aliskanlik,             time(15, 0))   # TR 18:00
-    jq.run_daily(aksam_ezber_kontrol,          time(17, 0))   # TR 20:00
-    jq.run_daily(gece_farkindalik,             time(17, 30))  # TR 20:30
-    jq.run_daily(gunluk_yapilacaklar_planla,   time(19, 30))  # TR 22:30
-    jq.run_daily(daily_report,                 time(19, 40))  # TR 22:40
-    jq.run_daily(render_suspend,               time(21, 30))  # TR 00:30 — bot kapanır
-    jq.run_daily(haftalik_yapilacaklar_planla, time(16, 0),  days=(5,))  # Cumartesi TR 19:00
-    jq.run_daily(haftalik_ezber_planla,        time(16, 30), days=(5,))  # Cumartesi TR 19:30
-    jq.run_daily(haftalik_yapilacaklar_rapor,  time(17, 0),  days=(4,))  # Cuma TR 20:00
+    jq.run_daily(gunluk_yapilacaklar_kontrol,  time(15, 10))
+    jq.run_daily(aksam_aliskanlik,             time(15, 0))
+    jq.run_daily(aksam_ezber_kontrol,          time(17, 0))
+    jq.run_daily(gece_farkindalik,             time(17, 30))
+    jq.run_daily(gunluk_yapilacaklar_planla,   time(19, 30))
+    jq.run_daily(daily_report,                 time(19, 40))
+    jq.run_daily(render_suspend,               time(21, 30))
+    jq.run_daily(haftalik_yapilacaklar_planla, time(16, 0),  days=(5,))
+    jq.run_daily(haftalik_ezber_planla,        time(16, 30), days=(5,))
+    jq.run_daily(haftalik_yapilacaklar_rapor,  time(17, 0),  days=(4,))
 
     telegram_app.add_handler(CallbackQueryHandler(button_handler))
     telegram_app.add_handler(CommandHandler("test", test_komutu))
@@ -1089,7 +1156,7 @@ async def lifespan(app: FastAPI):
     await telegram_app.initialize()
     await telegram_app.start()
 
-    webhook_url = os.getenv("WEBHOOK_URL", "https://telegram-bot-xxxx.onrender.com/webhook")
+    webhook_url = os.getenv("WEBHOOK_URL", "https://telegrambot-render-xodf.onrender.com/webhook")
     print(f"🔗 Webhook ayarlanıyor: {webhook_url}")
     try:
         await telegram_app.bot.set_webhook(url=webhook_url)
@@ -1125,19 +1192,19 @@ async def root():
     return {
         "status": "running",
         "bot": "active",
-        "version": "3.5 - Cevsen butonu, slash komutlar, otomatik suspend",
+        "version": "3.6 - Bos liste uyari butonlari eklendi",
         "message": "Telegram Bot çalışıyor! 🚀"
     }
 
 @app.get("/health")
 @app.head("/health")
 async def health():
-    return {"status": "healthy", "version": "3.5"}
+    return {"status": "healthy", "version": "3.6"}
 
 # =====================
 # 🚀 MAIN
 # =====================
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 10000))
-    print(f"🌐 Server başlatılıyor (v3.5) - Port: {port}")
+    print(f"🌐 Server başlatılıyor (v3.6) - Port: {port}")
     uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
