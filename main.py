@@ -16,9 +16,6 @@ from fastapi import FastAPI, Request, Response
 import uvicorn
 from contextlib import asynccontextmanager
 
-# =====================
-# 🔑 TOKEN & SÜPER GRUP / KONU BAŞLIĞI ID'LERİ
-# =====================
 TOKEN = os.getenv("BOT_TOKEN")
 if not TOKEN:
     raise ValueError("BOT_TOKEN ortam değişkeni eksik!")
@@ -32,17 +29,6 @@ TOPICS = {
     "farkindalik":   4,
 }
 
-# =====================
-# 🔑 RENDER & UPTIMEROBOT API
-# =====================
-RENDER_API_KEY         = os.getenv("RENDER_API_KEY", "")
-RENDER_SERVICE_ID      = os.getenv("RENDER_SERVICE_ID", "")
-UPTIMEROBOT_API_KEY    = os.getenv("UPTIMEROBOT_API_KEY", "")
-UPTIMEROBOT_MONITOR_ID = os.getenv("UPTIMEROBOT_MONITOR_ID", "")
-
-# =====================
-# 🌅 SABAH KARŞILAMA MESAJLARI
-# =====================
 SABAH_MESAJLARI = [
     "🦅 Güneş doğdu, sen de doğ! Fatih Sultan Mehmet 21 yaşında İstanbul'u fethetti. Sen bugün ne fethedeceksin?",
     "🌟 \"Bugün namazını kıl, yarın ölürsün belki!\" - Gaflet değil, gayret zamanı!",
@@ -80,9 +66,6 @@ SABAH_MESAJLARI = [
     "🐺 \"Kurt gibi azimli, kartal gibi yüksel!\" - Bozkurt ruhuyla güne başla!",
 ]
 
-# =====================
-# 💬 MOTİVASYON CEVAPLARI
-# =====================
 OLUMLU_CEVAPLAR = {
     "uyandi": [
         "✅ Aferin! Erken kalkan yolcu, hem yol alır hem de yola bakır!",
@@ -182,9 +165,6 @@ ERTELEME_OLUMSUZ = [
     "🎯 Tamam, ama yarın direkt harekete geç! Erteleme tuzağına düşme!",
 ]
 
-# =====================
-# 📝 10 GÜNLÜK KENDİNİ TANIMA PROGRAMI
-# =====================
 KENDIN_TANI_SORULAR = {
     1: {"tema": "Farkındalık Başlangıcı", "ek_soru": "Bende gerçekten iyi olan 1 özellik ne?"},
     2: {"tema": "Güçlü Yanlar", "ek_soru": "Bende gerçekten iyi olan 1 özellik ne?"},
@@ -198,10 +178,7 @@ KENDIN_TANI_SORULAR = {
     10: {"tema": "Değerlendirme ve Kapanış", "ek_soru": "Son 10 günde değiştiğim 1 şey ne?"}
 }
 
-# =====================
-# 📊 TAKİP VERİLERİ
-# =====================
-def get_daily_status(context: ContextTypes.DEFAULT_TYPE):
+def get_daily_status(context):
     if "daily_status" not in context.bot_data:
         context.bot_data["daily_status"] = _empty_daily()
     return context.bot_data["daily_status"]
@@ -216,57 +193,49 @@ def _empty_daily():
         "ezber_yaptim": None,
     }
 
-def reset_daily_status(context: ContextTypes.DEFAULT_TYPE):
+def reset_daily_status(context):
     context.bot_data["daily_status"] = _empty_daily()
 
-def get_10gun_sayaci(context: ContextTypes.DEFAULT_TYPE):
+def get_10gun_sayaci(context):
     if "gun_10_sayac" not in context.bot_data:
         context.bot_data["gun_10_sayac"] = 1
     return context.bot_data["gun_10_sayac"]
 
-def increment_10gun_sayaci(context: ContextTypes.DEFAULT_TYPE):
+def increment_10gun_sayaci(context):
     sayac = get_10gun_sayaci(context)
     sayac = (sayac % 10) + 1
     context.bot_data["gun_10_sayac"] = sayac
 
-def get_weekly_counters(context: ContextTypes.DEFAULT_TYPE):
+def get_weekly_counters(context):
     if "weekly_done" not in context.bot_data:
         context.bot_data["weekly_done"] = 0
         context.bot_data["weekly_total"] = 0
         context.bot_data["day_counter"] = 0
-    return (
-        context.bot_data["weekly_done"],
-        context.bot_data["weekly_total"],
-        context.bot_data["day_counter"],
-    )
+    return (context.bot_data["weekly_done"], context.bot_data["weekly_total"], context.bot_data["day_counter"])
 
-def update_weekly_counters(context: ContextTypes.DEFAULT_TYPE, done_today: int, total_today: int):
+def update_weekly_counters(context, done_today, total_today):
     get_weekly_counters(context)
     context.bot_data["weekly_done"] += done_today
     context.bot_data["weekly_total"] += total_today
     context.bot_data["day_counter"] += 1
 
-def reset_weekly_counters(context: ContextTypes.DEFAULT_TYPE):
+def reset_weekly_counters(context):
     context.bot_data["weekly_done"] = 0
     context.bot_data["weekly_total"] = 0
     context.bot_data["day_counter"] = 0
 
-def get_waiting_for(context: ContextTypes.DEFAULT_TYPE, chat_id):
-    wf = context.bot_data.get("waiting_for", {})
-    return wf.get(str(chat_id))
+def get_waiting_for(context, chat_id):
+    return context.bot_data.get("waiting_for", {}).get(str(chat_id))
 
-def set_waiting_for(context: ContextTypes.DEFAULT_TYPE, chat_id, key: str):
+def set_waiting_for(context, chat_id, key):
     if "waiting_for" not in context.bot_data:
         context.bot_data["waiting_for"] = {}
     context.bot_data["waiting_for"][str(chat_id)] = key
 
-def clear_waiting_for(context: ContextTypes.DEFAULT_TYPE, chat_id):
+def clear_waiting_for(context, chat_id):
     if "waiting_for" in context.bot_data:
         context.bot_data["waiting_for"].pop(str(chat_id), None)
 
-# =====================
-# 📋 YAPILACAKLAR LİSTESİ FONKSİYONLARI
-# =====================
 def get_gunluk_yapilacaklar(context):
     return context.bot_data.get("gunluk_yapilacaklar", [])
 
@@ -298,7 +267,7 @@ def reset_haftalik_tamamlanan(context):
 def get_haftalik_ezber_plan(context):
     return context.bot_data.get("haftalik_ezber_plan", "")
 
-def set_haftalik_ezber_plan(context, text: str):
+def set_haftalik_ezber_plan(context, text):
     context.bot_data["haftalik_ezber_plan"] = text.strip()
 
 def get_haftalik_ezber_tamam(context):
@@ -307,23 +276,16 @@ def get_haftalik_ezber_tamam(context):
 def set_haftalik_ezber_tamam(context, value):
     context.bot_data["haftalik_ezber_tamam"] = value
 
-# =====================
-# 🔘 BUTONLAR
-# =====================
-def yes_no_buttons(key: str):
-    return InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton("✅ Evet", callback_data=f"{key}_yes"),
-            InlineKeyboardButton("❌ Hayır", callback_data=f"{key}_no"),
-        ]
-    ])
+def yes_no_buttons(key):
+    return InlineKeyboardMarkup([[
+        InlineKeyboardButton("✅ Evet", callback_data=f"{key}_yes"),
+        InlineKeyboardButton("❌ Hayır", callback_data=f"{key}_no"),
+    ]])
 
-def farkindalik_buton(soru_key: str, soru_text: str):
-    return InlineKeyboardMarkup([
-        [InlineKeyboardButton(f"✍️ {soru_text}", callback_data=f"fark_{soru_key}")]
-    ])
+def farkindalik_buton(soru_key, soru_text):
+    return InlineKeyboardMarkup([[InlineKeyboardButton(f"✍️ {soru_text}", callback_data=f"fark_{soru_key}")]])
 
-def yapilacak_ekle_buttons(gorev_sayisi: int, is_haftalik=False):
+def yapilacak_ekle_buttons(gorev_sayisi, is_haftalik=False):
     prefix = "hafta_" if is_haftalik else ""
     return InlineKeyboardMarkup([
         [InlineKeyboardButton(f"➕ {gorev_sayisi + 1}. Görev Ekle", callback_data=f"{prefix}gorev_ekle_{gorev_sayisi}")],
@@ -338,7 +300,7 @@ def yapilacak_kontrol_buttons(is_haftalik=False):
         [InlineKeyboardButton("❌ Yapamadım", callback_data=f"{prefix}kontrol_yok")]
     ])
 
-def yapilacak_detay_buttons(liste: list, tamamlanan: dict, is_haftalik=False):
+def yapilacak_detay_buttons(liste, tamamlanan, is_haftalik=False):
     prefix = "hafta_" if is_haftalik else ""
     buttons = []
     for i, gorev in enumerate(liste):
@@ -349,14 +311,9 @@ def yapilacak_detay_buttons(liste: list, tamamlanan: dict, is_haftalik=False):
             InlineKeyboardButton(label_yes, callback_data=f"{prefix}detay_{i}_yes"),
             InlineKeyboardButton(label_no,  callback_data=f"{prefix}detay_{i}_no"),
         ])
-    buttons.append([
-        InlineKeyboardButton("📊 Raporu Tamamla", callback_data=f"{prefix}detay_rapor")
-    ])
+    buttons.append([InlineKeyboardButton("📊 Raporu Tamamla", callback_data=f"{prefix}detay_rapor")])
     return InlineKeyboardMarkup(buttons)
 
-# =====================
-# 🔘 YENİ: BOŞ LİSTE / EZBER UYARI BUTONLARI
-# =====================
 def gunluk_bos_buttons():
     return InlineKeyboardMarkup([
         [InlineKeyboardButton("➕ Yenisini Oluştur", callback_data="gunluk_olustur")],
@@ -375,176 +332,71 @@ def ezber_bos_buttons():
         [InlineKeyboardButton("❌ Kapat", callback_data="slash_kapat")]
     ])
 
-# =====================
-# 📨 YARDIMCI: Konuya mesaj gönder
-# =====================
-async def send_to_topic(context, topic_key: str, text: str, parse_mode=None, reply_markup=None):
+async def send_to_topic(context, topic_key, text, parse_mode=None, reply_markup=None):
     thread_id = TOPICS[topic_key]
-    kwargs = dict(
-        chat_id=SUPERGROUP_ID,
-        message_thread_id=thread_id,
-        text=text,
-    )
+    kwargs = dict(chat_id=SUPERGROUP_ID, message_thread_id=thread_id, text=text)
     if parse_mode:
         kwargs["parse_mode"] = parse_mode
     if reply_markup:
         kwargs["reply_markup"] = reply_markup
     return await context.bot.send_message(**kwargs)
 
-# =====================
-# 😴 RENDER SUSPEND FONKSİYONU
-# =====================
-async def render_suspend(context: ContextTypes.DEFAULT_TYPE):
-    """Gece TR 00:30 (UTC 21:30) — botu Render üzerinden suspend eder."""
-    if not RENDER_API_KEY or not RENDER_SERVICE_ID:
-        print("⚠️ RENDER_API_KEY veya RENDER_SERVICE_ID eksik, suspend yapılamadı.")
-        return
-    url = f"https://api.render.com/v1/services/{RENDER_SERVICE_ID}/suspend"
-    headers = {
-        "Accept": "application/json",
-        "Authorization": f"Bearer {RENDER_API_KEY}",
-    }
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.post(url, headers=headers) as resp:
-                if resp.status in (200, 201, 204):
-                    print("✅ Bot suspend edildi. İyi geceler! 🌙")
-                else:
-                    text = await resp.text()
-                    print(f"❌ Suspend hatası: {resp.status} — {text}")
-    except Exception as e:
-        print(f"❌ Suspend isteği gönderilemedi: {e}")
-
-# =====================
-# ⏰ GÖREV FONKSİYONLARI
-# =====================
 async def sabah_rutin(context: ContextTypes.DEFAULT_TYPE):
     karsilama = random.choice(SABAH_MESAJLARI)
-    mesaj = (
-        f"☀️ *SABAH RUTİN KONTROLÜ*\n\n"
-        f"{karsilama}\n\n"
-        f"━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"06:30'da uyandın mı?"
-    )
-    await send_to_topic(context, "gunluk_rutin", mesaj, parse_mode="Markdown",
-                        reply_markup=yes_no_buttons("uyandi"))
+    mesaj = f"☀️ *SABAH RUTİN KONTROLÜ*\n\n{karsilama}\n\n━━━━━━━━━━━━━━━━━━━━━━\n06:30'da uyandın mı?"
+    await send_to_topic(context, "gunluk_rutin", mesaj, parse_mode="Markdown", reply_markup=yes_no_buttons("uyandi"))
 
 async def ask_namaz(context, chat_id, thread_id):
-    await context.bot.send_message(
-        chat_id=chat_id, message_thread_id=thread_id,
-        text="🕌 Sabah namazını kıldın mı?",
-        reply_markup=yes_no_buttons("namaz")
-    )
+    await context.bot.send_message(chat_id=chat_id, message_thread_id=thread_id, text="🕌 Sabah namazını kıldın mı?", reply_markup=yes_no_buttons("namaz"))
 
 async def ask_kitap_sabah(context, chat_id, thread_id):
-    await context.bot.send_message(
-        chat_id=chat_id, message_thread_id=thread_id,
-        text="📖 5 sayfa kitap okudun mu?",
-        reply_markup=yes_no_buttons("kitap_sabah")
-    )
+    await context.bot.send_message(chat_id=chat_id, message_thread_id=thread_id, text="📖 5 sayfa kitap okudun mu?", reply_markup=yes_no_buttons("kitap_sabah"))
 
 async def ask_yasin(context, chat_id, thread_id):
-    await context.bot.send_message(
-        chat_id=chat_id, message_thread_id=thread_id,
-        text="📿 Yasin okudun mu?",
-        reply_markup=yes_no_buttons("yasin")
-    )
+    await context.bot.send_message(chat_id=chat_id, message_thread_id=thread_id, text="📿 Yasin okudun mu?", reply_markup=yes_no_buttons("yasin"))
 
 async def ask_cevsen(context, chat_id, thread_id):
-    await context.bot.send_message(
-        chat_id=chat_id, message_thread_id=thread_id,
-        text="📖 Bugün 15 bab Cevşen okudun mu?",
-        reply_markup=yes_no_buttons("cevsen")
-    )
+    await context.bot.send_message(chat_id=chat_id, message_thread_id=thread_id, text="📖 Bugün 15 bab Cevşen okudun mu?", reply_markup=yes_no_buttons("cevsen"))
 
 async def ask_sinav(context, chat_id, thread_id):
-    await context.bot.send_message(
-        chat_id=chat_id, message_thread_id=thread_id,
-        text="💪 20 şınav yaptın mı?",
-        reply_markup=yes_no_buttons("sinav")
-    )
+    await context.bot.send_message(chat_id=chat_id, message_thread_id=thread_id, text="💪 20 şınav yaptın mı?", reply_markup=yes_no_buttons("sinav"))
 
 async def ask_mekik(context, chat_id, thread_id):
-    await context.bot.send_message(
-        chat_id=chat_id, message_thread_id=thread_id,
-        text="🏋️ 20 mekik yaptın mı?",
-        reply_markup=yes_no_buttons("mekik")
-    )
+    await context.bot.send_message(chat_id=chat_id, message_thread_id=thread_id, text="🏋️ 20 mekik yaptın mı?", reply_markup=yes_no_buttons("mekik"))
 
 async def ask_telefon(context, chat_id, thread_id):
-    await context.bot.send_message(
-        chat_id=chat_id, message_thread_id=thread_id,
-        text="📵 Telefonu ilk 30 dakika kullanmadın mı?",
-        reply_markup=yes_no_buttons("telefon")
-    )
+    await context.bot.send_message(chat_id=chat_id, message_thread_id=thread_id, text="📵 Telefonu ilk 30 dakika kullanmadın mı?", reply_markup=yes_no_buttons("telefon"))
 
 async def ask_hedef(context, chat_id, thread_id):
-    await context.bot.send_message(
-        chat_id=chat_id, message_thread_id=thread_id,
-        text="🎯 Bugün için 1 ana hedef belirledin mi?",
-        reply_markup=yes_no_buttons("hedef")
-    )
+    await context.bot.send_message(chat_id=chat_id, message_thread_id=thread_id, text="🎯 Bugün için 1 ana hedef belirledin mi?", reply_markup=yes_no_buttons("hedef"))
 
 async def ask_ezber(context, chat_id, thread_id):
-    await context.bot.send_message(
-        chat_id=chat_id, message_thread_id=thread_id,
-        text="🧠 Bugün bir ezber (cümle/atasözü/vecize/şiir satırı) yaptın mı?",
-        reply_markup=yes_no_buttons("ezber_yaptim")
-    )
+    await context.bot.send_message(chat_id=chat_id, message_thread_id=thread_id, text="🧠 Bugün bir ezber (cümle/atasözü/vecize/şiir satırı) yaptın mı?", reply_markup=yes_no_buttons("ezber_yaptim"))
 
 async def ogle_kontrol(context: ContextTypes.DEFAULT_TYPE):
-    mesaj = (
-        "📖 *GÜN ORTASI – KİTAP & ÖĞRENME*\n\n"
-        "Bugün en az 5 sayfa kitap okudun mu?"
-    )
-    await send_to_topic(context, "gunluk_rutin", mesaj, parse_mode="Markdown",
-                        reply_markup=yes_no_buttons("kitap_ogle"))
+    await send_to_topic(context, "gunluk_rutin", "📖 *GÜN ORTASI – KİTAP & ÖĞRENME*\n\nBugün en az 5 sayfa kitap okudun mu?", parse_mode="Markdown", reply_markup=yes_no_buttons("kitap_ogle"))
 
 async def aksam_aliskanlik(context: ContextTypes.DEFAULT_TYPE):
-    mesaj = (
-        "🔁 *AKŞAM – ALIŞKANLIK TAKİBİ*\n\n"
-        "Bugün alışkanlıklarına sadık kaldın mı?"
-    )
-    await send_to_topic(context, "aliskanlik", mesaj, parse_mode="Markdown",
-                        reply_markup=yes_no_buttons("aliskanlik_sadik"))
+    await send_to_topic(context, "aliskanlik", "🔁 *AKŞAM – ALIŞKANLIK TAKİBİ*\n\nBugün alışkanlıklarına sadık kaldın mı?", parse_mode="Markdown", reply_markup=yes_no_buttons("aliskanlik_sadik"))
 
 async def aksam_ezber_kontrol(context: ContextTypes.DEFAULT_TYPE):
     plan = get_haftalik_ezber_plan(context)
     if not plan.strip():
         return
-    mesaj = (
-        "🧠 *HAFTALIK EZBER KONTROLÜ*\n\n"
-        f"Hedef:\n{plan}\n\n"
-        "Bugün ezberine devam ettin / tamamladın mı?"
-    )
-    await send_to_topic(context, "gunluk_rutin", mesaj, parse_mode="Markdown",
-                        reply_markup=yes_no_buttons("hafta_ezber"))
+    mesaj = f"🧠 *HAFTALIK EZBER KONTROLÜ*\n\nHedef:\n{plan}\n\nBugün ezberine devam ettin / tamamladın mı?"
+    await send_to_topic(context, "gunluk_rutin", mesaj, parse_mode="Markdown", reply_markup=yes_no_buttons("hafta_ezber"))
 
 async def gece_farkindalik(context: ContextTypes.DEFAULT_TYPE):
     gun_sayisi = get_10gun_sayaci(context)
     gun_bilgi = KENDIN_TANI_SORULAR[gun_sayisi]
-    mesaj = (
-        f"🧠 *GECE – KENDİNİ TANIMA & FARKINDALIK*\n\n"
-        f"📆 Gün {gun_sayisi} – {gun_bilgi['tema']}\n\n"
-        f"Bugün 4 soruya cevap vereceksin.\n"
-        f"Her soruya butona basarak başla!\n\n"
-        f"━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"İlk soruya başlayalım:"
-    )
-    await send_to_topic(context, "farkindalik", mesaj, parse_mode="Markdown",
-                        reply_markup=farkindalik_buton("en_iyi_sey", "Son 24 saatte en iyi yaptığım şey?"))
+    mesaj = f"🧠 *GECE – KENDİNİ TANIMA & FARKINDALIK*\n\n📆 Gün {gun_sayisi} – {gun_bilgi['tema']}\n\nBugün 4 soruya cevap vereceksin.\nHer soruya butona basarak başla!\n\n━━━━━━━━━━━━━━━━━━━━━━\nİlk soruya başlayalım:"
+    await send_to_topic(context, "farkindalik", mesaj, parse_mode="Markdown", reply_markup=farkindalik_buton("en_iyi_sey", "Son 24 saatte en iyi yaptığım şey?"))
 
 async def gunluk_yapilacaklar_planla(context: ContextTypes.DEFAULT_TYPE):
     set_gunluk_yapilacaklar(context, [])
     reset_gunluk_tamamlanan(context)
-    mesaj = (
-        "📋 *GÜNLÜK YAPILACAKLAR PLANLAMA*\n\n"
-        "Yarın yapmayı planladığın görevleri ekle!\n\n"
-        "📝 Mevcut Liste: (Boş)\n\n"
-        "[➕ Görev Ekle] butonuna bas"
-    )
-    await send_to_topic(context, "yapilacaklar", mesaj, parse_mode="Markdown",
-                        reply_markup=yapilacak_ekle_buttons(0))
+    mesaj = "📋 *GÜNLÜK YAPILACAKLAR PLANLAMA*\n\nYarın yapmayı planladığın görevleri ekle!\n\n📝 Mevcut Liste: (Boş)\n\n[➕ Görev Ekle] butonuna bas"
+    await send_to_topic(context, "yapilacaklar", mesaj, parse_mode="Markdown", reply_markup=yapilacak_ekle_buttons(0))
 
 async def gunluk_yapilacaklar_kontrol(context: ContextTypes.DEFAULT_TYPE):
     liste = get_gunluk_yapilacaklar(context)
@@ -555,32 +407,17 @@ async def gunluk_yapilacaklar_kontrol(context: ContextTypes.DEFAULT_TYPE):
     mesaj = "📋 *DÜN PLANLADIĞIN GÖREVLER*\n\n"
     for i, gorev in enumerate(liste, 1):
         mesaj += f"{i}. {gorev}\n"
-    mesaj += "\n━━━━━━━━━━━━━━━━━━━━━━\n"
-    mesaj += "Hangilerini tamamladın?"
-    await send_to_topic(context, "yapilacaklar", mesaj, parse_mode="Markdown",
-                        reply_markup=yapilacak_kontrol_buttons())
+    mesaj += "\n━━━━━━━━━━━━━━━━━━━━━━\nHangilerini tamamladın?"
+    await send_to_topic(context, "yapilacaklar", mesaj, parse_mode="Markdown", reply_markup=yapilacak_kontrol_buttons())
 
 async def haftalik_yapilacaklar_planla(context: ContextTypes.DEFAULT_TYPE):
     set_haftalik_yapilacaklar(context, [])
     reset_haftalik_tamamlanan(context)
-    mesaj = (
-        "📅 *HAFTALIK YAPILACAKLAR PLANLAMA*\n\n"
-        "Bu hafta mutlaka yapılacak görevleri ekle!\n\n"
-        "📝 Mevcut Liste: (Boş)\n\n"
-        "[➕ Görev Ekle] butonuna bas"
-    )
-    await send_to_topic(context, "yapilacaklar", mesaj, parse_mode="Markdown",
-                        reply_markup=yapilacak_ekle_buttons(0, is_haftalik=True))
+    mesaj = "📅 *HAFTALIK YAPILACAKLAR PLANLAMA*\n\nBu hafta mutlaka yapılacak görevleri ekle!\n\n📝 Mevcut Liste: (Boş)\n\n[➕ Görev Ekle] butonuna bas"
+    await send_to_topic(context, "yapilacaklar", mesaj, parse_mode="Markdown", reply_markup=yapilacak_ekle_buttons(0, is_haftalik=True))
 
 async def haftalik_ezber_planla(context: ContextTypes.DEFAULT_TYPE):
-    mesaj = (
-        "📜 *BU HAFTA EZBER PLANI*\n\n"
-        "Bu hafta ezberlemek istediğin metni (şiir, kıta, hadis, atasözü vs.) yazabilirsin.\n"
-        "Birden fazla satır da olabilir.\n\n"
-        "Şimdiki plan:\n"
-        f"{get_haftalik_ezber_plan(context) or '(henüz yok)'}\n\n"
-        "Cevabını yaz:"
-    )
+    mesaj = f"📜 *BU HAFTA EZBER PLANI*\n\nBu hafta ezberlemek istediğin metni yazabilirsin.\n\nŞimdiki plan:\n{get_haftalik_ezber_plan(context) or '(henüz yok)'}\n\nCevabını yaz:"
     set_waiting_for(context, SUPERGROUP_ID, "hafta_ezber_plan")
     await send_to_topic(context, "yapilacaklar", mesaj, parse_mode="Markdown")
 
@@ -594,8 +431,7 @@ async def haftalik_yapilacaklar_rapor(context: ContextTypes.DEFAULT_TYPE):
     for i, gorev in enumerate(liste):
         durum = tamamlanan.get(i, "❌")
         mesaj += f"{durum} {gorev}\n"
-    mesaj += f"\n━━━━━━━━━━━━━━━━━━━━━━\n"
-    mesaj += f"🎯 Tamamlanan: {tamamlanan_sayi}/{len(liste)}\n\n"
+    mesaj += f"\n━━━━━━━━━━━━━━━━━━━━━━\n🎯 Tamamlanan: {tamamlanan_sayi}/{len(liste)}\n\n"
     if tamamlanan_sayi == len(liste):
         mesaj += "🔥 Muhteşem! Hepsini tamamladın! Devam böyle! 💪"
     elif tamamlanan_sayi >= len(liste) * 0.7:
@@ -608,19 +444,14 @@ async def haftalik_yapilacaklar_rapor(context: ContextTypes.DEFAULT_TYPE):
 
 async def daily_report(context: ContextTypes.DEFAULT_TYPE):
     daily = get_daily_status(context)
-    butonlu_keys = [
-        "uyandi", "namaz", "kitap_sabah", "yasin", "cevsen", "sinav", "mekik",
-        "telefon", "hedef", "kitap_ogle", "aliskanlik_sadik", "erteleme",
-        "ezber_yaptim"
-    ]
+    butonlu_keys = ["uyandi", "namaz", "kitap_sabah", "yasin", "cevsen", "sinav", "mekik", "telefon", "hedef", "kitap_ogle", "aliskanlik_sadik", "erteleme", "ezber_yaptim"]
     done_today = sum(1 for k in butonlu_keys if daily.get(k) == "✅")
     total_today = len(butonlu_keys)
     update_weekly_counters(context, done_today, total_today)
     weekly_done, weekly_total, day_counter = get_weekly_counters(context)
     percentage = int((done_today / total_today) * 100) if total_today else 0
     mesaj = (
-        "📊 *GÜNLÜK RAPOR*\n"
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        "📊 *GÜNLÜK RAPOR*\n━━━━━━━━━━━━━━━━━━━━━━\n\n"
         "*☀️ SABAH RUTİN*\n"
         f"• 06:30 Uyanma: {daily.get('uyandi') or '—'}\n"
         f"• Sabah Namazı: {daily.get('namaz') or '—'}\n"
@@ -645,10 +476,7 @@ async def daily_report(context: ContextTypes.DEFAULT_TYPE):
         f"• Öğrendiğim: {daily.get('ogrendigi_gece') or '—'}\n"
         f"• Ek Cevap: {daily.get('ek_cevap') or '—'}\n\n"
         "━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"🎯 *GÜNLÜK SKOR*\n"
-        f"✅ Tamamlanan: {done_today}/{total_today}\n"
-        f"📈 Başarı Oranı: *%{percentage}*\n\n"
-        f"🔥 Devam et! 💪"
+        f"🎯 *GÜNLÜK SKOR*\n✅ Tamamlanan: {done_today}/{total_today}\n📈 Başarı Oranı: *%{percentage}*\n\n🔥 Devam et! 💪"
     )
     await send_to_topic(context, "farkindalik", mesaj, parse_mode="Markdown")
     if day_counter >= 7:
@@ -661,39 +489,19 @@ async def weekly_report(context: ContextTypes.DEFAULT_TYPE):
     weekly_done, weekly_total, _ = get_weekly_counters(context)
     percentage = int((weekly_done / weekly_total) * 100) if weekly_total else 0
     mesaj = (
-        "📅 *HAFTALIK PERFORMANS RAPORU*\n"
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n"
-        f"📊 Toplam Görev: {weekly_total}\n"
-        f"✅ Tamamlanan: {weekly_done}\n"
-        f"❌ Yapılmayan: {weekly_total - weekly_done}\n\n"
-        f"🎯 *Haftalık Başarı: %{percentage}*\n\n"
-        "━━━━━━━━━━━━━━━━━━━━━━\n"
-        "💪 Devam et, istikrar kazanıyorsun!\n"
-        "🔥 Her gün daha iyiye gidiyorsun!"
+        "📅 *HAFTALIK PERFORMANS RAPORU*\n━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        f"📊 Toplam Görev: {weekly_total}\n✅ Tamamlanan: {weekly_done}\n❌ Yapılmayan: {weekly_total - weekly_done}\n\n"
+        f"🎯 *Haftalık Başarı: %{percentage}*\n\n━━━━━━━━━━━━━━━━━━━━━━\n💪 Devam et, istikrar kazanıyorsun!\n🔥 Her gün daha iyiye gidiyorsun!"
     )
     await send_to_topic(context, "farkindalik", mesaj, parse_mode="Markdown")
 
-# =====================
-# 📌 SLASH KOMUTLARI
-# =====================
 async def test_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     mesaj = (
-        "✅ *Bot aktif ve çalışıyor!*\n\n"
-        "🤖 Sistem durumu: Normal\n"
-        "📡 Webhook: Bağlı\n"
-        "⏰ Zamanlı görevler: Aktif\n\n"
-        "━━━━━━━━━━━━━━━━━━━━━━\n"
-        "📌 *Günlük program (TR saati):*\n"
-        "• 07:00 — Sabah rutini\n"
-        "• 11:00 — Öğlen kitap kontrolü\n"
-        "• 18:00 — Akşam alışkanlık takibi\n"
-        "• 18:10 — Günlük yapılacaklar kontrolü\n"
-        "• 20:00 — Ezber kontrolü\n"
-        "• 20:30 — Gece farkındalık\n"
-        "• 22:30 — Günlük yapılacaklar planı\n"
-        "• 22:40 — Günlük rapor\n"
-        "• 00:30 — Bot kapanır 🌙\n\n"
-        "Saati geldiğinde mesajlar otomatik gelecek! 💪"
+        "✅ *Bot aktif ve çalışıyor!*\n\n🤖 Sistem durumu: Normal\n📡 Webhook: Bağlı\n⏰ Zamanlı görevler: Aktif\n\n"
+        "━━━━━━━━━━━━━━━━━━━━━━\n📌 *Günlük program (TR saati):*\n"
+        "• 07:00 — Sabah rutini\n• 11:00 — Öğlen kitap kontrolü\n• 18:00 — Akşam alışkanlık takibi\n"
+        "• 18:10 — Günlük yapılacaklar kontrolü\n• 20:00 — Ezber kontrolü\n• 20:30 — Gece farkındalık\n"
+        "• 22:30 — Günlük yapılacaklar planı\n• 22:40 — Günlük rapor\n\nSaati geldiğinde mesajlar otomatik gelecek! 💪"
     )
     await update.message.reply_text(mesaj, parse_mode="Markdown")
 
@@ -712,12 +520,8 @@ async def gunluk_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     liste = get_gunluk_yapilacaklar(context)
     if not liste:
         await update.message.reply_text(
-            "📋 *GÜNLÜK YAPILACAKLAR*\n\n"
-            "⚠️ Henüz günlük yapılacaklar listesi oluşturulmamış!\n\n"
-            "Yeni bir liste oluşturmak ister misin?",
-            parse_mode="Markdown",
-            reply_markup=gunluk_bos_buttons()
-        )
+            "📋 *GÜNLÜK YAPILACAKLAR*\n\n⚠️ Henüz günlük yapılacaklar listesi oluşturulmamış!\n\nYeni bir liste oluşturmak ister misin?",
+            parse_mode="Markdown", reply_markup=gunluk_bos_buttons())
         return
     mesaj = "📋 *GÜNLÜK YAPILACAKLAR*\n\n"
     for i, gorev in enumerate(liste, 1):
@@ -728,12 +532,8 @@ async def haftalik_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     liste = get_haftalik_yapilacaklar(context)
     if not liste:
         await update.message.reply_text(
-            "📅 *HAFTALIK YAPILACAKLAR*\n\n"
-            "⚠️ Henüz haftalık yapılacaklar listesi oluşturulmamış!\n\n"
-            "Yeni bir liste oluşturmak ister misin?",
-            parse_mode="Markdown",
-            reply_markup=haftalik_bos_buttons()
-        )
+            "📅 *HAFTALIK YAPILACAKLAR*\n\n⚠️ Henüz haftalık yapılacaklar listesi oluşturulmamış!\n\nYeni bir liste oluşturmak ister misin?",
+            parse_mode="Markdown", reply_markup=haftalik_bos_buttons())
         return
     mesaj = "📅 *HAFTALIK YAPILACAKLAR*\n\n"
     for i, gorev in enumerate(liste, 1):
@@ -744,19 +544,11 @@ async def ezber_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     plan = get_haftalik_ezber_plan(context)
     if not plan.strip():
         await update.message.reply_text(
-            "📜 *HAFTALIK EZBER*\n\n"
-            "⚠️ Henüz haftalık ezber metni eklenmemiş!\n\n"
-            "Yeni bir ezber metni oluşturmak ister misin?",
-            parse_mode="Markdown",
-            reply_markup=ezber_bos_buttons()
-        )
+            "📜 *HAFTALIK EZBER*\n\n⚠️ Henüz haftalık ezber metni eklenmemiş!\n\nYeni bir ezber metni oluşturmak ister misin?",
+            parse_mode="Markdown", reply_markup=ezber_bos_buttons())
         return
-    mesaj = f"📜 *HAFTALIK EZBER METNİ*\n\n{plan}"
-    await update.message.reply_text(mesaj, parse_mode="Markdown")
+    await update.message.reply_text(f"📜 *HAFTALIK EZBER METNİ*\n\n{plan}", parse_mode="Markdown")
 
-# =====================
-# 🔔 BUTON HANDLER
-# =====================
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -765,84 +557,58 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = query.message.chat_id
     thread_id = query.message.message_thread_id
 
-    # ── Kapat butonu ─────────────────────────────────────────
     if data == "slash_kapat":
         await query.edit_message_reply_markup(reply_markup=None)
         return
 
-    # ── Günlük liste oluştur ─────────────────────────────────
     if data == "gunluk_olustur":
         set_gunluk_yapilacaklar(context, [])
         reset_gunluk_tamamlanan(context)
         await query.edit_message_text(
-            "📋 *GÜNLÜK YAPILACAKLAR PLANLAMA*\n\n"
-            "Yapmayı planladığın görevleri ekle!\n\n"
-            "📝 Mevcut Liste: (Boş)\n\n"
-            "[➕ Görev Ekle] butonuna bas",
-            parse_mode="Markdown",
-            reply_markup=yapilacak_ekle_buttons(0, is_haftalik=False)
-        )
+            "📋 *GÜNLÜK YAPILACAKLAR PLANLAMA*\n\nYapmayı planladığın görevleri ekle!\n\n📝 Mevcut Liste: (Boş)\n\n[➕ Görev Ekle] butonuna bas",
+            parse_mode="Markdown", reply_markup=yapilacak_ekle_buttons(0, is_haftalik=False))
         return
 
-    # ── Haftalık liste oluştur ───────────────────────────────
     if data == "haftalik_olustur":
         set_haftalik_yapilacaklar(context, [])
         reset_haftalik_tamamlanan(context)
         await query.edit_message_text(
-            "📅 *HAFTALIK YAPILACAKLAR PLANLAMA*\n\n"
-            "Bu hafta mutlaka yapılacak görevleri ekle!\n\n"
-            "📝 Mevcut Liste: (Boş)\n\n"
-            "[➕ Görev Ekle] butonuna bas",
-            parse_mode="Markdown",
-            reply_markup=yapilacak_ekle_buttons(0, is_haftalik=True)
-        )
+            "📅 *HAFTALIK YAPILACAKLAR PLANLAMA*\n\nBu hafta mutlaka yapılacak görevleri ekle!\n\n📝 Mevcut Liste: (Boş)\n\n[➕ Görev Ekle] butonuna bas",
+            parse_mode="Markdown", reply_markup=yapilacak_ekle_buttons(0, is_haftalik=True))
         return
 
-    # ── Ezber metni oluştur ──────────────────────────────────
     if data == "ezber_olustur":
         set_waiting_for(context, chat_id, "hafta_ezber_plan")
         await query.edit_message_text(
-            "📜 *YENİ EZBER METNİ*\n\n"
-            "Ezberlemek istediğin metni yaz:\n"
-            "(şiir, kıta, hadis, atasözü vs.)\n\n"
-            "💬 Cevabını yaz:",
-            parse_mode="Markdown"
-        )
+            "📜 *YENİ EZBER METNİ*\n\nEzberlemek istediğin metni yaz:\n(şiir, kıta, hadis, atasözü vs.)\n\n💬 Cevabını yaz:",
+            parse_mode="Markdown")
         return
 
-    # ── Cevşen butonları ─────────────────────────────────────
     if data == "cevsen_yes":
         daily["cevsen"] = "✅"
         await query.edit_message_text(random.choice(OLUMLU_CEVAPLAR["cevsen"]))
         return
-
     if data == "cevsen_no":
         daily["cevsen"] = "❌"
         await query.edit_message_text(random.choice(OLUMSUZ_CEVAPLAR))
         return
-
-    # ── Ezber butonları ──────────────────────────────────────
     if data == "ezber_yaptim_yes":
         daily["ezber_yaptim"] = "✅"
         await query.edit_message_text(random.choice(OLUMLU_CEVAPLAR["ezber_yaptim"]))
         return
-
     if data == "ezber_yaptim_no":
         daily["ezber_yaptim"] = "❌"
         await query.edit_message_text(random.choice(OLUMSUZ_CEVAPLAR))
         return
-
     if data == "hafta_ezber_yes":
         set_haftalik_ezber_tamam(context, "✅")
         await query.edit_message_text("🔥 Harika! Haftalık ezberine devam ediyorsun!")
         return
-
     if data == "hafta_ezber_no":
         set_haftalik_ezber_tamam(context, "❌")
         await query.edit_message_text(random.choice(OLUMSUZ_CEVAPLAR))
         return
 
-    # ── Farkındalık soruları ─────────────────────────────────
     if data.startswith("fark_"):
         soru_key = data.replace("fark_", "")
         set_waiting_for(context, chat_id, soru_key)
@@ -852,16 +618,12 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "ogrendigi_gece": "3️⃣ Bugün öğrendiğim 1 şey?",
             "ek_cevap": f"➕ {KENDIN_TANI_SORULAR[get_10gun_sayaci(context)]['ek_soru']}"
         }
-        await query.edit_message_text(
-            f"{soru_metinleri.get(soru_key, 'Cevabını yaz:')}\n\n💬 Cevabını yaz:"
-        )
+        await query.edit_message_text(f"{soru_metinleri.get(soru_key, 'Cevabını yaz:')}\n\n💬 Cevabını yaz:")
         return
 
-    # ── Yapılacaklar: haftalık mı günlük mü? ────────────────
     is_haftalik = data.startswith("hafta_") and not data.startswith("hafta_ezber")
     prefix = "hafta_" if is_haftalik else ""
 
-    # ── Görev ekleme ─────────────────────────────────────────
     if data.startswith(prefix + "gorev_ekle_"):
         gorev_index = int(data.split("_")[-1])
         waiting_key = f"yapilacak_{'hafta_' if is_haftalik else ''}{gorev_index}"
@@ -882,23 +644,17 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         clear_waiting_for(context, chat_id)
         return
 
-    # ── Kontrol butonları (hepsi / kısmen / hiç) ─────────────
     if data.startswith(prefix + "kontrol_"):
         kontrol_tip = data.replace(prefix + "kontrol_", "")
         liste = get_haftalik_yapilacaklar(context) if is_haftalik else get_gunluk_yapilacaklar(context)
         tamamlanan = get_haftalik_tamamlanan(context) if is_haftalik else get_gunluk_tamamlanan(context)
-
         if kontrol_tip == "hepsi":
             for i in range(len(liste)):
                 tamamlanan[i] = "✅"
             baslik = "📅 *HAFTALIK RAPOR*\n\n" if is_haftalik else "📋 *GÜNLÜK RAPOR*\n\n"
             mesaj = baslik + "\n".join(f"✅ {g}" for g in liste)
             mesaj += "\n\n━━━━━━━━━━━━━━━━━━━━━━\n"
-            mesaj += random.choice([
-                "🔥 Muhteşem! Hepsini tamamladın! 💪",
-                "🦅 Kartal gibi uçuyorsun! 🎯",
-                "⚔️ Yeniçeri disiplini! Her şeyi bitirdin! 🔥",
-            ])
+            mesaj += random.choice(["🔥 Muhteşem! Hepsini tamamladın! 💪", "🦅 Kartal gibi uçuyorsun! 🎯", "⚔️ Yeniçeri disiplini! Her şeyi bitirdin! 🔥"])
             await query.edit_message_text(mesaj, parse_mode="Markdown")
             if is_haftalik:
                 reset_haftalik_tamamlanan(context)
@@ -906,14 +662,12 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             else:
                 reset_gunluk_tamamlanan(context)
                 set_gunluk_yapilacaklar(context, [])
-
         elif kontrol_tip == "yok":
             for i in range(len(liste)):
                 tamamlanan[i] = "❌"
             baslik = "📅 *HAFTALIK RAPOR*\n\n" if is_haftalik else "📋 *GÜNLÜK RAPOR*\n\n"
             mesaj = baslik + "\n".join(f"❌ {g}" for g in liste)
-            mesaj += "\n\n━━━━━━━━━━━━━━━━━━━━━━\n"
-            mesaj += random.choice(OLUMSUZ_CEVAPLAR)
+            mesaj += "\n\n━━━━━━━━━━━━━━━━━━━━━━\n" + random.choice(OLUMSUZ_CEVAPLAR)
             await query.edit_message_text(mesaj, parse_mode="Markdown")
             if is_haftalik:
                 reset_haftalik_tamamlanan(context)
@@ -921,7 +675,6 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             else:
                 reset_gunluk_tamamlanan(context)
                 set_gunluk_yapilacaklar(context, [])
-
         elif kontrol_tip == "kismen":
             if is_haftalik:
                 reset_haftalik_tamamlanan(context)
@@ -931,13 +684,9 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             mesaj = "Hangilerini yaptın? Tümünü işaretle, sonra 📊 Raporu Tamamla'ya bas:\n\n"
             for i, gorev in enumerate(liste, 1):
                 mesaj += f"{i}. {gorev}\n"
-            await query.edit_message_text(
-                mesaj,
-                reply_markup=yapilacak_detay_buttons(liste, tamamlanan, is_haftalik)
-            )
+            await query.edit_message_text(mesaj, reply_markup=yapilacak_detay_buttons(liste, tamamlanan, is_haftalik))
         return
 
-    # ── Detay: "Raporu Tamamla" butonu ───────────────────────
     if data == prefix + "detay_rapor":
         liste = get_haftalik_yapilacaklar(context) if is_haftalik else get_gunluk_yapilacaklar(context)
         tamamlanan = get_haftalik_tamamlanan(context) if is_haftalik else get_gunluk_tamamlanan(context)
@@ -947,8 +696,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         for i, gorev in enumerate(liste):
             durum = tamamlanan.get(i, "❌")
             mesaj += f"{durum} {gorev}\n"
-        mesaj += f"\n━━━━━━━━━━━━━━━━━━━━━━\n"
-        mesaj += f"🎯 Tamamlanan: {tamamlanan_sayi}/{len(liste)}\n\n"
+        mesaj += f"\n━━━━━━━━━━━━━━━━━━━━━━\n🎯 Tamamlanan: {tamamlanan_sayi}/{len(liste)}\n\n"
         if tamamlanan_sayi == len(liste):
             mesaj += "🔥 Muhteşem! Hepsini tamamladın! 💪"
         elif tamamlanan_sayi >= len(liste) * 0.7:
@@ -964,26 +712,20 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             set_gunluk_yapilacaklar(context, [])
         return
 
-    # ── Detay: tek tek işaretleme ─────────────────────────────
     if data.startswith(prefix + "detay_"):
         parts = data.split("_")
         result = parts[-1]
         gorev_index = int(parts[-2])
         liste = get_haftalik_yapilacaklar(context) if is_haftalik else get_gunluk_yapilacaklar(context)
         tamamlanan = get_haftalik_tamamlanan(context) if is_haftalik else get_gunluk_tamamlanan(context)
-
         if result in ("yes", "no"):
             tamamlanan[gorev_index] = "✅" if result == "yes" else "❌"
             mesaj = "Hangilerini yaptın? Tümünü işaretle, sonra 📊 Raporu Tamamla'ya bas:\n\n"
             for i, gorev in enumerate(liste, 1):
                 mesaj += f"{i}. {gorev}\n"
-            await query.edit_message_text(
-                mesaj,
-                reply_markup=yapilacak_detay_buttons(liste, tamamlanan, is_haftalik)
-            )
+            await query.edit_message_text(mesaj, reply_markup=yapilacak_detay_buttons(liste, tamamlanan, is_haftalik))
         return
 
-    # ── Ana rutin yes/no butonları ───────────────────────────
     parts = data.rsplit("_", 1)
     if len(parts) != 2 or parts[1] not in ("yes", "no"):
         return
@@ -1019,20 +761,11 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await ask_ezber(context, chat_id, thread_id)
     elif key == "kitap_ogle":
         set_waiting_for(context, chat_id, "ogrendigi")
-        await context.bot.send_message(
-            chat_id=chat_id, message_thread_id=thread_id,
-            text="📝 Bugün öğrendiğin 1 şey neydi?\n\n💬 Cevabını yazabilirsin:"
-        )
+        await context.bot.send_message(chat_id=chat_id, message_thread_id=thread_id, text="📝 Bugün öğrendiğin 1 şey neydi?\n\n💬 Cevabını yazabilirsin:")
     elif key == "aliskanlik_sadik":
         set_waiting_for(context, chat_id, "zor_yapilan")
-        await context.bot.send_message(
-            chat_id=chat_id, message_thread_id=thread_id,
-            text="📝 Zor geldiği halde yaptığın 1 şey neydi?\n\n💬 Cevabını yazabilirsin:"
-        )
+        await context.bot.send_message(chat_id=chat_id, message_thread_id=thread_id, text="📝 Zor geldiği halde yaptığın 1 şey neydi?\n\n💬 Cevabını yazabilirsin:")
 
-# =====================
-# 💬 YAZI MESAJI HANDLER
-# =====================
 async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message:
         return
@@ -1048,9 +781,7 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if waiting == "hafta_ezber_plan":
         set_haftalik_ezber_plan(context, user_text)
         set_haftalik_ezber_tamam(context, None)
-        await update.message.reply_text(
-            f"✅ Haftalık ezber kaydedildi!\n\n{user_text}\n\nCuma akşamı kontrol edeceğiz."
-        )
+        await update.message.reply_text(f"✅ Haftalık ezber kaydedildi!\n\n{user_text}\n\nCuma akşamı kontrol edeceğiz.")
         clear_waiting_for(context, chat_id)
         return
 
@@ -1067,10 +798,7 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         mesaj = "📋 YAPILACAKLAR LİSTESİ\n\n"
         for i, gorev in enumerate(liste, 1):
             mesaj += f"{i}. {gorev}\n"
-        await update.message.reply_text(
-            mesaj,
-            reply_markup=yapilacak_ekle_buttons(len(liste), is_haftalik)
-        )
+        await update.message.reply_text(mesaj, reply_markup=yapilacak_ekle_buttons(len(liste), is_haftalik))
         clear_waiting_for(context, chat_id)
         return
 
@@ -1079,26 +807,14 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         clear_waiting_for(context, chat_id)
         gun_sayisi = get_10gun_sayaci(context)
         if waiting == "en_iyi_sey":
-            await update.message.reply_text(
-                "✅ Kaydedildi!\n\nİkinci soruya geç:",
-                reply_markup=farkindalik_buton("daha_iyi_sey", "Daha iyi yapabileceğim bir şey?")
-            )
+            await update.message.reply_text("✅ Kaydedildi!\n\nİkinci soruya geç:", reply_markup=farkindalik_buton("daha_iyi_sey", "Daha iyi yapabileceğim bir şey?"))
         elif waiting == "daha_iyi_sey":
-            await update.message.reply_text(
-                "✅ Kaydedildi!\n\nÜçüncü soruya geç:",
-                reply_markup=farkindalik_buton("ogrendigi_gece", "Bugün öğrendiğim 1 şey?")
-            )
+            await update.message.reply_text("✅ Kaydedildi!\n\nÜçüncü soruya geç:", reply_markup=farkindalik_buton("ogrendigi_gece", "Bugün öğrendiğim 1 şey?"))
         elif waiting == "ogrendigi_gece":
             gun_bilgi = KENDIN_TANI_SORULAR[gun_sayisi]
-            await update.message.reply_text(
-                "✅ Kaydedildi!\n\nSon soruya geç:",
-                reply_markup=farkindalik_buton("ek_cevap", gun_bilgi['ek_soru'])
-            )
+            await update.message.reply_text("✅ Kaydedildi!\n\nSon soruya geç:", reply_markup=farkindalik_buton("ek_cevap", gun_bilgi['ek_soru']))
         elif waiting == "ek_cevap":
-            await update.message.reply_text(
-                "✅ Tüm sorular tamamlandı! Günü güzel kapatıyorsun 🌙\n\n"
-                "📊 Günlük rapor birazdan gelecek!"
-            )
+            await update.message.reply_text("✅ Tüm sorular tamamlandı! Günü güzel kapatıyorsun 🌙\n\n📊 Günlük rapor birazdan gelecek!")
         return
 
     daily[waiting] = user_text
@@ -1109,21 +825,10 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif waiting == "zor_yapilan":
         await update.message.reply_text("✅ Kaydedildi!")
         await asyncio.sleep(0.5)
-        await context.bot.send_message(
-            chat_id=chat_id,
-            message_thread_id=thread_id,
-            text="🔁 Bugün ertelediğin bir şey oldu mu?",
-            reply_markup=yes_no_buttons("erteleme")
-        )
+        await context.bot.send_message(chat_id=chat_id, message_thread_id=thread_id, text="🔁 Bugün ertelediğin bir şey oldu mu?", reply_markup=yes_no_buttons("erteleme"))
 
-# =====================
-# 🚀 GLOBAL APPLICATION
-# =====================
 telegram_app = None
 
-# =====================
-# 🔧 LIFESPAN MANAGER
-# =====================
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global telegram_app
@@ -1132,6 +837,11 @@ async def lifespan(app: FastAPI):
 
     jq = telegram_app.job_queue
 
+    # =====================================================================
+    # render_suspend TAMAMEN KALDIRILDI — Bot 7/24 açık, UptimeRobot ile
+    # ayakta tutulacak. Render free plan ayda 750 saat veriyor, 720 saatte
+    # 24 saat açık kalıyor, limit dahilinde.
+    # =====================================================================
     jq.run_daily(sabah_rutin,                  time(4, 0))
     jq.run_daily(ogle_kontrol,                 time(8, 0))
     jq.run_daily(gunluk_yapilacaklar_kontrol,  time(15, 10))
@@ -1140,7 +850,6 @@ async def lifespan(app: FastAPI):
     jq.run_daily(gece_farkindalik,             time(17, 30))
     jq.run_daily(gunluk_yapilacaklar_planla,   time(19, 30))
     jq.run_daily(daily_report,                 time(19, 40))
-    jq.run_daily(render_suspend,               time(21, 30))
     jq.run_daily(haftalik_yapilacaklar_planla, time(16, 0),  days=(5,))
     jq.run_daily(haftalik_ezber_planla,        time(16, 30), days=(5,))
     jq.run_daily(haftalik_yapilacaklar_rapor,  time(17, 0),  days=(4,))
@@ -1170,9 +879,6 @@ async def lifespan(app: FastAPI):
     await telegram_app.stop()
     await telegram_app.shutdown()
 
-# =====================
-# 🌐 FASTAPI UYGULAMASI
-# =====================
 app = FastAPI(title="Telegram Bot Webhook", lifespan=lifespan)
 
 @app.post("/webhook")
@@ -1189,22 +895,14 @@ async def telegram_webhook(request: Request):
 
 @app.get("/")
 async def root():
-    return {
-        "status": "running",
-        "bot": "active",
-        "version": "3.6 - Bos liste uyari butonlari eklendi",
-        "message": "Telegram Bot çalışıyor! 🚀"
-    }
+    return {"status": "running", "bot": "active", "version": "3.7 - render_suspend kaldirildi 7/24 aktif", "message": "Telegram Bot çalışıyor! 🚀"}
 
 @app.get("/health")
 @app.head("/health")
 async def health():
-    return {"status": "healthy", "version": "3.6"}
+    return {"status": "healthy", "version": "3.7"}
 
-# =====================
-# 🚀 MAIN
-# =====================
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 10000))
-    print(f"🌐 Server başlatılıyor (v3.6) - Port: {port}")
+    print(f"🌐 Server başlatılıyor (v3.7) - Port: {port}")
     uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
