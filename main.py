@@ -39,6 +39,11 @@ DIKSIYON_PROGRAM = {
 _R'nin Doğru Çıkış Noktasını Bulma_
 
 ━━━━━━━━━━━━━━━━━━━━━━
+⚠️ *BU HAFTA HATIRLATMA — Hata 1*
+❌ R'yi boğazdan (Fransız R'si gibi) çıkarmak
+✔ Doğrusu: R sesi dil ucunun üst damağa değip titreşmesiyle çıkar. Boğaz değil, ağız!
+
+━━━━━━━━━━━━━━━━━━━━━━
 🎯 *BU HAFTANIN HEDEFİ*
 Dil ortasının titreşimini hissetmek. 'N' sesiyle başlayıp titreşime geçmek. R'yi genizden değil ağızdan çıkarmak.
 
@@ -48,6 +53,14 @@ Dil ortasının titreşimini hissetmek. 'N' sesiyle başlayıp titreşime geçme
 • Dudakları büzüp şişirir gibi — 5 tekrar.
 • Dili dışarı çıkarıp yukarı-aşağı hareket ettirme — 5 tekrar.
 • 'T-t-t-t' sesini hızlıca tekrarla (dil ucunu damaklara vur).
+
+━━━━━━━━━━━━━━━━━━━━━━
+🖊️ *KALEM YÖNTEMİ — Her gün 2 dk*
+1. Bir kalemi yatay şekilde ön dişlerinin arasına koy.
+2. Ağzın hafif açık olsun.
+3. Dil ucunu üst dişlerinin arkasındaki damağa değdir.
+4. Bu pozisyonda söyle: "dıdıdıdıdı"
+Amaç: Dil geriye kaçmaz, R için doğru pozisyon öğrenilir.
 
 ━━━━━━━━━━━━━━━━━━━━━━
 📝 *KELİME LİSTESİ — Günde 3 kez, yavaş ve abartarak*
@@ -84,6 +97,11 @@ Her gün 10-15 dakika ayır. Ses kaydı al ve dinle. Aynaya bakarak çalış."""
 _Sert Ünsüzlerle R (TR, KR, PR, BR)_
 
 ━━━━━━━━━━━━━━━━━━━━━━
+⚠️ *BU HAFTA HATIRLATMA — Hata 2*
+❌ Dil çok geride kalıyor: Dil ağız ortasında kalırsa titreşim oluşmaz.
+✔ Doğrusu: Dil ucu üst dişlerin hemen arkasındaki damağa gelmeli. Bunu kontrol et!
+
+━━━━━━━━━━━━━━━━━━━━━━
 🎯 *BU HAFTANIN HEDEFİ*
 Sert ünsüzlerin itici gücü ile R'nin daha belirgin çıkması. Dil bir önceki sert sesten güç alarak R'ye geçmeli.
 
@@ -92,6 +110,14 @@ Sert ünsüzlerin itici gücü ile R'nin daha belirgin çıkması. Dil bir önce
 • 'Pr-pr-pr, tr-tr-tr, kr-kr-kr' seslerini hızlıca tekrarla (her biri 10 kez).
 • Dudakları germe-gevşetme — 10 tekrar.
 • 'T' ve 'D' seslerini patlat, ardından 'R' ekle: T...R, D...R.
+
+━━━━━━━━━━━━━━━━━━━━━━
+🖊️ *D–R GEÇİŞ EGZERSİZİ — Her gün 3 dk*
+Önce yavaş söyle: dı – dı – dı – dı
+Sonra hızlandır: dıdıdıdıdı
+Daha sonra: drdrdrdr
+Son aşama: drrrrrr
+Amaç: D sesi dilin damağa vurmasını sağlar ve R titreşimini başlatır.
 
 ━━━━━━━━━━━━━━━━━━━━━━
 📝 *KELİME LİSTESİ — Günde 3 kez, yavaş ve abartarak*
@@ -128,6 +154,11 @@ Her gün 10-15 dakika ayır. Ses kaydı al ve dinle. Aynaya bakarak çalış."""
 _Yumuşak Ünlülerle R (RE, Rİ, RA, RO, RU)_
 
 ━━━━━━━━━━━━━━━━━━━━━━
+⚠️ *BU HAFTA HATIRLATMA — Hata 3*
+❌ Yeterince hava vermemek: Titreşim için hava gerekir, sessizce nefes tutarsan R çıkmaz.
+✔ Doğrusu: Ağızdan biraz güçlü hava üfle. Titreşimi hava başlatır.
+
+━━━━━━━━━━━━━━━━━━━━━━
 🎯 *BU HAFTANIN HEDEFİ*
 R'yi ince ve kalın ünlülerle akıcı hale getirmek. Her ünlü ile R arasındaki farkı hissetmek.
 
@@ -136,6 +167,14 @@ R'yi ince ve kalın ünlülerle akıcı hale getirmek. Her ünlü ile R arasınd
 • 'Ra-ra-ra, re-re-re, ri-ri-ri, ro-ro-ro, ru-ru-ru' (her biri 10 kez, önce yavaş sonra hızlı).
 • Dudakları 'o' ve 'i' yapıp geçişler — 10 tekrar.
 • Derin nefes al, verirken 'rrrr' sesini uzat.
+
+━━━━━━━━━━━━━━━━━━━━━━
+💨 *TİTREŞİM BAŞLATMA EGZERSİZİ — Her gün 2 dk*
+• Dil ucunu damağa yaklaştır.
+• Hafif güçlü hava ver: rrrrrrrr
+• Eğer çıkmazsa şu şekilde başla: trrrrrrr
+• Dil ucunu damağa bastır, 5 sn tut, bırak — 10 tekrar.
+Amaç: Dil ucunun titreşmesini sağlamak.
 
 ━━━━━━━━━━━━━━━━━━━━━━
 📝 *KELİME LİSTESİ — Günde 3 kez, yavaş ve abartarak*
@@ -172,6 +211,14 @@ Her gün 10-15 dakika ayır. Ses kaydı al ve dinle. Aynaya bakarak çalış."""
 _Kelime Sonundaki R'leri Güçlendirme_
 
 ━━━━━━━━━━━━━━━━━━━━━━
+⚠️ *BU HAFTA HATIRLATMA — Genel Tekrar*
+3 Büyük Hata özeti:
+❌ R'yi boğazdan çıkarmak → Dil ucu damağa değmeli
+❌ Dil geride kalmak → Dil ucu üst dişlerin arkasına gelmeli
+❌ Az hava vermek → Güçlü hava ile titreşim başlar
+Bu haftadan itibaren üçünü birden otomatik kontrol et!
+
+━━━━━━━━━━━━━━━━━━━━━━
 🎯 *BU HAFTANIN HEDEFİ*
 En çok yutlan kelime sonu R'leri (var, gelir, gider) belirginleştirmek. Bu R'ler Türkçede en çok kaybolan seslerdir.
 
@@ -180,6 +227,13 @@ En çok yutlan kelime sonu R'leri (var, gelir, gider) belirginleştirmek. Bu R'l
 • 'Er, ar, or, ur, ür' seslerini tekrarla (her biri 10 kez, son R'yi uzat).
 • Dudakları kuvvetlice büzüp aç — 10 tekrar.
 • Yüksek sesle say: bir-R, iki, üç-R, dört-R, beş, altı-R.
+
+━━━━━━━━━━━━━━━━━━━━━━
+🥁 *DİL TIKLATMA EGZERSİZİ — Her gün 2 dk*
+At yürüyüşü sesi çıkar: tak tak tak tak tak
+Dil damağa vurup ayrılır.
+🔁 30 tekrar
+Amaç: Dil ucunun hızlı hareket etmesini sağlamak.
 
 ━━━━━━━━━━━━━━━━━━━━━━
 📝 *KELİME LİSTESİ — Günde 3 kez, yavaş ve abartarak*
@@ -214,6 +268,13 @@ Her gün 10-15 dakika ayır. Ses kaydı al ve dinle. Aynaya bakarak çalış."""
 
     5: """🎙️ *DİKSİYON PROGRAMI — HAFTA 5*
 _R-L Ayrımı (Karıştırmayı Önlemek)_
+
+━━━━━━━━━━━━━━━━━━━━━━
+⚠️ *BU HAFTA HATIRLATMA — Pozisyon Kontrolü*
+Aynaya bak:
+• L söylediğinde: Dil ucu yukarıya, dişlerin arkasına değiyor mu?
+• R söylediğinde: Dil biraz geride, titreşim hissediliyor mu?
+Fark net değilse önce bu ikisini ayır, sonra kelimelere geç.
 
 ━━━━━━━━━━━━━━━━━━━━━━
 🎯 *BU HAFTANIN HEDEFİ*
@@ -259,6 +320,13 @@ Her gün 10-15 dakika ayır. Ses kaydı al ve dinle. Aynaya bakarak çalış."""
 _R-Y Ayrımı & Nefes Kontrolü_
 
 ━━━━━━━━━━━━━━━━━━━━━━
+⚠️ *BU HAFTA HATIRLATMA — Hava Akışı*
+R sesinde hava akışını test et: Avucunu ağzının önüne tut.
+• R söylerken avucunda hava hissedebiliyor musun?
+• Hissedemiyorsan daha güçlü hava ver.
+• Çok kuvvetli değil — kontrollü, sürekli bir hava akışı olmalı.
+
+━━━━━━━━━━━━━━━━━━━━━━
 🎯 *BU HAFTANIN HEDEFİ*
 R ile Y'yi ayırt etmek (Y çok ince, R daha sert ve titreşimli). Aynı zamanda uzun cümlelerde nefesi doğru yerlerde almak.
 
@@ -302,6 +370,13 @@ Her gün 10-15 dakika ayır. Ses kaydı al ve dinle. Aynaya bakarak çalış."""
 _Karma Tekerlemeler — Seviye 1_
 
 ━━━━━━━━━━━━━━━━━━━━━━
+⚠️ *BU HAFTA HATIRLATMA — Dil Kas Gücü*
+Dil ucunu damağa bastır, 5 saniye tut, bırak — 10 tekrar.
+At yürüyüşü: tak-tak-tak-tak (30 tekrar).
+Bu iki egzersizi haftanın her günü ısınma olarak yap.
+Güçlü dil = Net R!
+
+━━━━━━━━━━━━━━━━━━━━━━
 🎯 *BU HAFTANIN HEDEFİ*
 Birden fazla zor sesi aynı cümlede yönetmek. Tempo kontrolü: önce yavaş, sonra hızlan.
 
@@ -343,6 +418,13 @@ Her gün 10-15 dakika ayır. Ses kaydı al ve dinle. Aynaya bakarak çalış."""
 
     8: """🎙️ *DİKSİYON PROGRAMI — HAFTA 8*
 _Karma Tekerlemeler — Seviye 2 & Hızlanma_
+
+━━━━━━━━━━━━━━━━━━━━━━
+⚠️ *BU HAFTA HATIRLATMA — Hız Tuzağı*
+Hızlandıkça R'leri yutmak çok yaygın bir hata!
+Test: Bu cümleyi önce yavaş, sonra hızlı söyle:
+"Kardeşim dört gün sonra Trabzon'dan gelecek."
+Hızlı söyleyince R'ler kayıyor mu? Kayıyorsa tempo düşür, önce doğru söyle!
 
 ━━━━━━━━━━━━━━━━━━━━━━
 🎯 *BU HAFTANIN HEDEFİ*
@@ -390,6 +472,14 @@ Her gün 10-15 dakika ayır. Ses kaydı al ve dinle. Aynaya bakarak çalış."""
 
     9: """🎙️ *DİKSİYON PROGRAMI — HAFTA 9*
 _Porsuk Tekerlemesi — Aşamalı Çalışma (Bölüm 1)_
+
+━━━━━━━━━━━━━━━━━━━━━━
+⚠️ *BU HAFTA HATIRLATMA — Kayıt & Dinleme*
+Bu hafta mutlaka ses kaydı al!
+• Porsuk tekerlemesinin ilk 2 cümlesini kaydet.
+• Dinle: R sesleri net mi? Boğazdan mı geliyor?
+• Hata bulduysan o kelimeyi 20 kez tekrar et.
+Kulak eğitimi olmadan düzelme olmaz!
 
 ━━━━━━━━━━━━━━━━━━━━━━
 🎯 *BU HAFTANIN HEDEFİ*
@@ -442,6 +532,14 @@ Her gün 10-15 dakika ayır. Ses kaydı al ve dinle. Aynaya bakarak çalış."""
 _Porsuk Tekerlemesi — Aşamalı Çalışma (Bölüm 2)_
 
 ━━━━━━━━━━━━━━━━━━━━━━
+⚠️ *BU HAFTA HATIRLATMA — Tam Kontrol Listesi*
+Her çalışma öncesi 30 saniye kontrol:
+✔ Boğazım değil, dilim çalışıyor mu?
+✔ Dil ucum damağa yakın mı?
+✔ Nefesim güçlü ve kontrollü mü?
+Bu üçü tamam → Egzersize başla!
+
+━━━━━━━━━━━━━━━━━━━━━━
 🎯 *BU HAFTANIN HEDEFİ*
 Tekeremenin tamamını ezberleyip, diyalog kısmını da dahil ederek söyleyebilmek.
 
@@ -480,6 +578,14 @@ Her gün 10-15 dakika ayır. Ses kaydı al ve dinle. Aynaya bakarak çalış."""
 
     11: """🎙️ *DİKSİYON PROGRAMI — HAFTA 11*
 _Günlük Konuşma & Haber Spikeri Metinleri_
+
+━━━━━━━━━━━━━━━━━━━━━━
+⚠️ *BU HAFTA HATIRLATMA — Günlük Hayat Testi*
+Bu hafta günlük konuşmanda R'leri bilinçli takip et.
+Arkadaşınla konuşurken, telefonda konuşurken...
+• R sesini yuttuğun anları fark et.
+• Fark ettiğinde dur, tekrar et, doğru söyle.
+Otomatikleşme bu farkındalıkla başlar!
 
 ━━━━━━━━━━━━━━━━━━━━━━
 🎯 *BU HAFTANIN HEDEFİ*
@@ -525,6 +631,14 @@ Her gün 10-15 dakika ayır. Ses kaydı al ve dinle. Aynaya bakarak çalış."""
 
     12: """🎙️ *DİKSİYON PROGRAMI — HAFTA 12*
 _FİNAL — Genel Tekrar & Performans Testi_
+
+━━━━━━━━━━━━━━━━━━━━━━
+⚠️ *FİNAL HATIRLATMASI — 3 Büyük Hata Son Kez*
+❌ Hata 1: R boğazdan → Dil ucu damağa
+❌ Hata 2: Dil geride → Üst dişlerin arkasına
+❌ Hata 3: Az hava → Güçlü, kontrollü hava
+Bu üçü artık sende alışkanlık haline geldi mi?
+1. Haftanın kaydını dinle, sonra bugünkü kaydı dinle. Fark var mı?
 
 ━━━━━━━━━━━━━━━━━━━━━━
 🎯 *BU HAFTANIN HEDEFİ*
@@ -881,15 +995,36 @@ def gunluk_bos_buttons():
         [InlineKeyboardButton("❌ Kapat", callback_data="slash_kapat")]
     ])
 
+def gunluk_mevcut_buttons():
+    """Günlük liste mevcut olduğunda gösterilecek butonlar."""
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("✏️ Düzenle", callback_data="gunluk_duzenle")],
+        [InlineKeyboardButton("❌ Kapat", callback_data="slash_kapat")]
+    ])
+
 def haftalik_bos_buttons():
     return InlineKeyboardMarkup([
         [InlineKeyboardButton("➕ Yenisini Oluştur", callback_data="haftalik_olustur")],
         [InlineKeyboardButton("❌ Kapat", callback_data="slash_kapat")]
     ])
 
+def haftalik_mevcut_buttons():
+    """Haftalık liste mevcut olduğunda gösterilecek butonlar."""
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("✏️ Düzenle", callback_data="haftalik_duzenle")],
+        [InlineKeyboardButton("❌ Kapat", callback_data="slash_kapat")]
+    ])
+
 def ezber_bos_buttons():
     return InlineKeyboardMarkup([
         [InlineKeyboardButton("➕ Yenisini Oluştur", callback_data="ezber_olustur")],
+        [InlineKeyboardButton("❌ Kapat", callback_data="slash_kapat")]
+    ])
+
+def ezber_mevcut_buttons():
+    """Ezber metni mevcut olduğunda gösterilecek butonlar."""
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("✏️ Düzenle", callback_data="ezber_duzenle")],
         [InlineKeyboardButton("❌ Kapat", callback_data="slash_kapat")]
     ])
 
@@ -918,7 +1053,6 @@ async def send_to_topic_long(context, topic_key, text, parse_mode=None):
     if len(text) <= limit:
         await send_to_topic(context, topic_key, text, parse_mode=parse_mode)
         return
-    # Satır ortasında bölme
     bolme = text.rfind("\n", 0, limit)
     if bolme == -1:
         bolme = limit
@@ -969,7 +1103,6 @@ async def ask_ezber(context, chat_id, thread_id):
 # ─────────────────────────────────────────────
 
 async def diksiyon_sabah_hatirlatma(context: ContextTypes.DEFAULT_TYPE):
-    """Her sabah diksiyon topic'ine o haftanın kaçıncı günü olduğunu söyler ve çalışma sorusu sorar."""
     hafta = get_diksiyon_hafta(context)
     if hafta < 1 or hafta > 12:
         hafta = 1
@@ -1172,7 +1305,8 @@ async def gunluk_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     mesaj = "📋 *GÜNLÜK YAPILACAKLAR*\n\n"
     for i, gorev in enumerate(liste, 1):
         mesaj += f"{i}. {gorev}\n"
-    await update.message.reply_text(mesaj, parse_mode="Markdown")
+    mesaj += "\n━━━━━━━━━━━━━━━━━━━━━━\nListeyi düzenlemek ister misin?"
+    await update.message.reply_text(mesaj, parse_mode="Markdown", reply_markup=gunluk_mevcut_buttons())
 
 async def haftalik_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     liste = get_haftalik_yapilacaklar(context)
@@ -1184,7 +1318,8 @@ async def haftalik_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     mesaj = "📅 *HAFTALIK YAPILACAKLAR*\n\n"
     for i, gorev in enumerate(liste, 1):
         mesaj += f"{i}. {gorev}\n"
-    await update.message.reply_text(mesaj, parse_mode="Markdown")
+    mesaj += "\n━━━━━━━━━━━━━━━━━━━━━━\nListeyi düzenlemek ister misin?"
+    await update.message.reply_text(mesaj, parse_mode="Markdown", reply_markup=haftalik_mevcut_buttons())
 
 async def ezber_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     plan = get_haftalik_ezber_plan(context)
@@ -1193,7 +1328,8 @@ async def ezber_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "📜 *HAFTALIK EZBER*\n\n⚠️ Henüz haftalık ezber metni eklenmemiş!\n\nYeni bir ezber metni oluşturmak ister misin?",
             parse_mode="Markdown", reply_markup=ezber_bos_buttons())
         return
-    await update.message.reply_text(f"📜 *HAFTALIK EZBER METNİ*\n\n{plan}", parse_mode="Markdown")
+    mesaj = f"📜 *HAFTALIK EZBER METNİ*\n\n{plan}\n\n━━━━━━━━━━━━━━━━━━━━━━\nEzber metnini düzenlemek ister misin?"
+    await update.message.reply_text(mesaj, parse_mode="Markdown", reply_markup=ezber_mevcut_buttons())
 
 async def rutin_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     daily = get_daily_status(context)
@@ -1208,10 +1344,6 @@ async def rutin_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=rutin_baslat_buttons())
 
 async def diksiyon_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """
-    /diksiyon <1-12> — Diksiyon hafta sayacını ayarlar.
-    Argümansız kullanılırsa mevcut haftayı gösterir.
-    """
     args = context.args
     if not args:
         hafta = get_diksiyon_hafta(context)
@@ -1232,10 +1364,6 @@ async def diksiyon_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown")
 
 async def dicerik_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """
-    /dicerik <1-12> — O haftanın tam programını gönderir.
-    Argümansız kullanılırsa mevcut haftanın programını gösterir.
-    """
     args = context.args
     if not args:
         hafta = get_diksiyon_hafta(context)
@@ -1251,7 +1379,6 @@ async def dicerik_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not program:
         await update.message.reply_text("⚠️ Bu hafta için program bulunamadı.")
         return
-    # Uzun mesajı bölerek gönder
     limit = 4000
     if len(program) <= limit:
         await update.message.reply_text(program, parse_mode="Markdown")
@@ -1264,10 +1391,6 @@ async def dicerik_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(program[bolme:], parse_mode="Markdown")
 
 async def tanima_komutu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """
-    /tanima <1-10> — 10 günlük farkındalık sayacını ayarlar.
-    Argümansız kullanılırsa mevcut günü gösterir.
-    """
     args = context.args
     if not args:
         gun = get_10gun_sayaci(context)
@@ -1312,7 +1435,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(mesaj, parse_mode="Markdown", reply_markup=yes_no_buttons("uyandi"))
         return
 
-    if data == "gunluk_olustur":
+    # ─── GÜNLÜK DÜZENLEME ───
+    if data == "gunluk_olustur" or data == "gunluk_duzenle":
         set_gunluk_yapilacaklar(context, [])
         reset_gunluk_tamamlanan(context)
         await query.edit_message_text(
@@ -1320,7 +1444,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown", reply_markup=yapilacak_ekle_buttons(0, is_haftalik=False))
         return
 
-    if data == "haftalik_olustur":
+    # ─── HAFTALIK DÜZENLEME ───
+    if data == "haftalik_olustur" or data == "haftalik_duzenle":
         set_haftalik_yapilacaklar(context, [])
         reset_haftalik_tamamlanan(context)
         await query.edit_message_text(
@@ -1328,7 +1453,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown", reply_markup=yapilacak_ekle_buttons(0, is_haftalik=True))
         return
 
-    if data == "ezber_olustur":
+    # ─── EZBER DÜZENLEME ───
+    if data == "ezber_olustur" or data == "ezber_duzenle":
         set_waiting_for(context, chat_id, "hafta_ezber_plan")
         await query.edit_message_text(
             "📜 *YENİ EZBER METNİ*\n\nEzberlemek istediğin metni yaz:\n(şiir, kıta, hadis, atasözü vs.)\n\n💬 Cevabını yaz:",
@@ -1374,7 +1500,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         mesaj = f"✅ {len(liste)} görev kaydedildi!\n\n"
         for i, gorev in enumerate(liste, 1):
             mesaj += f"{i}. {gorev}\n"
-        mesaj += "\n📋 " + ("Cuma akşamı" if is_haftalik else "Yarın akşam") + " kontrol edeceğiz!"
+        mesaj += "\n📋 " + ("Pazar akşamı" if is_haftalik else "Yarın akşam") + " kontrol edeceğiz!"
         await query.edit_message_text(mesaj)
         clear_waiting_for(context, chat_id)
         return
@@ -1527,7 +1653,7 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if waiting == "hafta_ezber_plan":
         set_haftalik_ezber_plan(context, user_text)
         set_haftalik_ezber_tamam(context, None)
-        await update.message.reply_text(f"✅ Haftalık ezber kaydedildi!\n\n{user_text}\n\nCuma akşamı kontrol edeceğiz.")
+        await update.message.reply_text(f"✅ Haftalık ezber kaydedildi!\n\n{user_text}\n\nPazar akşamı kontrol edeceğiz.")
         clear_waiting_for(context, chat_id)
         return
 
@@ -1606,9 +1732,11 @@ async def lifespan(app: FastAPI):
     jq.run_daily(gece_farkindalik,               time(17, 30))
     jq.run_daily(gunluk_yapilacaklar_planla,     time(19, 30))
     jq.run_daily(daily_report,                   time(19, 40))
-    jq.run_daily(haftalik_yapilacaklar_planla,   time(16, 0),  days=(5,))
-    jq.run_daily(haftalik_ezber_planla,          time(16, 30), days=(5,))
-    jq.run_daily(haftalik_yapilacaklar_rapor,    time(17, 0),  days=(4,))
+    # Haftalık yapılacaklar Pazar günü (days=6), ezber de Pazar
+    jq.run_daily(haftalik_yapilacaklar_planla,   time(16, 0),  days=(6,))
+    jq.run_daily(haftalik_ezber_planla,          time(16, 30), days=(6,))
+    # Haftalık rapor Cumartesi akşamı (days=5) — haftayı kapatır
+    jq.run_daily(haftalik_yapilacaklar_rapor,    time(17, 0),  days=(5,))
     jq.run_daily(haftalik_diksiyon_hafta_guncelle, time(7, 0), days=(0,))  # Pazartesi
 
     telegram_app.add_handler(CallbackQueryHandler(button_handler))
@@ -1656,14 +1784,14 @@ async def telegram_webhook(request: Request):
 
 @app.get("/")
 async def root():
-    return {"status": "running", "bot": "active", "version": "4.0 - diksiyon modulu eklendi", "message": "Telegram Bot çalışıyor! 🚀"}
+    return {"status": "running", "bot": "active", "version": "4.1 - duzenleme butonu + diksiyon guncellendi", "message": "Telegram Bot çalışıyor! 🚀"}
 
 @app.get("/health")
 @app.head("/health")
 async def health():
-    return {"status": "healthy", "version": "4.0"}
+    return {"status": "healthy", "version": "4.1"}
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 10000))
-    print(f"🌐 Server başlatılıyor (v4.0) - Port: {port}")
+    print(f"🌐 Server başlatılıyor (v4.1) - Port: {port}")
     uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
