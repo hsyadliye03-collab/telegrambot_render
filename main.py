@@ -963,7 +963,7 @@ def farkindalik_buton(soru_key, soru_text):
 def yapilacak_ekle_buttons(gorev_sayisi, is_haftalik=False):
     prefix = "hafta_" if is_haftalik else ""
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton(f"➕ {gorev_sayisi + 1}. Görev Ekle", callback_data=f"{prefix}gorev_ekle_{gorev_sayisi}")],
+        [InlineKeyboardButton(f"➕ {gorev_sayisi + 1}. Görevi Ekle", callback_data=f"{prefix}gorev_ekle_{gorev_sayisi}")],
         [InlineKeyboardButton("✅ Listemi Bitir", callback_data=f"{prefix}gorev_kaydet")]
     ])
 
@@ -998,8 +998,16 @@ def gunluk_bos_buttons():
 def gunluk_mevcut_buttons():
     """Günlük liste mevcut olduğunda gösterilecek butonlar."""
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton("✏️ Düzenle", callback_data="gunluk_duzenle")],
+        [InlineKeyboardButton("✏️ Düzenle", callback_data="gunluk_duzenle_menu")],
         [InlineKeyboardButton("❌ Kapat", callback_data="slash_kapat")]
+    ])
+
+def gunluk_duzenle_menu_buttons():
+    """Günlük düzenle alt menüsü: görev ekle veya sıfırdan oluştur."""
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("➕ Mevcut Listeye Görev Ekle", callback_data="gunluk_gorev_ekle_mevcut")],
+        [InlineKeyboardButton("🗑️ Sil & Sıfırdan Oluştur",    callback_data="gunluk_olustur")],
+        [InlineKeyboardButton("❌ Kapat",                       callback_data="slash_kapat")]
     ])
 
 def haftalik_bos_buttons():
@@ -1011,8 +1019,16 @@ def haftalik_bos_buttons():
 def haftalik_mevcut_buttons():
     """Haftalık liste mevcut olduğunda gösterilecek butonlar."""
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton("✏️ Düzenle", callback_data="haftalik_duzenle")],
+        [InlineKeyboardButton("✏️ Düzenle", callback_data="haftalik_duzenle_menu")],
         [InlineKeyboardButton("❌ Kapat", callback_data="slash_kapat")]
+    ])
+
+def haftalik_duzenle_menu_buttons():
+    """Haftalık düzenle alt menüsü: görev ekle veya sıfırdan oluştur."""
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("➕ Mevcut Listeye Görev Ekle", callback_data="haftalik_gorev_ekle_mevcut")],
+        [InlineKeyboardButton("🗑️ Sil & Sıfırdan Oluştur",    callback_data="haftalik_olustur")],
+        [InlineKeyboardButton("❌ Kapat",                       callback_data="slash_kapat")]
     ])
 
 def ezber_bos_buttons():
@@ -1032,6 +1048,14 @@ def rutin_baslat_buttons():
     return InlineKeyboardMarkup([
         [InlineKeyboardButton("▶️ Rutini Başlat", callback_data="rutin_baslat")],
         [InlineKeyboardButton("❌ Kapat", callback_data="slash_kapat")]
+    ])
+
+def yapilacak_ekle_mevcut_buttons(gorev_sayisi, is_haftalik=False):
+    """Mevcut listeye ek görev eklerken gösterilecek butonlar."""
+    prefix = "hafta_" if is_haftalik else ""
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("➕ Bir Tane Daha Ekle", callback_data=f"{prefix}gorev_ekle_{gorev_sayisi}")],
+        [InlineKeyboardButton("✅ Tamam, Bitir",        callback_data=f"{prefix}gorev_kaydet")]
     ])
 
 # ─────────────────────────────────────────────
@@ -1435,8 +1459,28 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(mesaj, parse_mode="Markdown", reply_markup=yes_no_buttons("uyandi"))
         return
 
-    # ─── GÜNLÜK DÜZENLEME ───
-    if data == "gunluk_olustur" or data == "gunluk_duzenle":
+    # ─── GÜNLÜK DÜZENLE MENÜSÜ ───────────────────────────────────────────────
+    if data == "gunluk_duzenle_menu":
+        liste = get_gunluk_yapilacaklar(context)
+        mesaj = "📋 *GÜNLÜK YAPILACAKLAR — DÜZENLE*\n\n"
+        for i, gorev in enumerate(liste, 1):
+            mesaj += f"{i}. {gorev}\n"
+        mesaj += "\n━━━━━━━━━━━━━━━━━━━━━━\nNe yapmak istersin?"
+        await query.edit_message_text(mesaj, parse_mode="Markdown", reply_markup=gunluk_duzenle_menu_buttons())
+        return
+
+    # ─── GÜNLÜK MEVCUT LİSTEYE GÖREV EKLE ──────────────────────────────────
+    if data == "gunluk_gorev_ekle_mevcut":
+        liste = get_gunluk_yapilacaklar(context)
+        gorev_index = len(liste)
+        waiting_key = f"yapilacak_{gorev_index}"
+        set_waiting_for(context, chat_id, waiting_key)
+        await query.edit_message_text(
+            f"📋 Mevcut listene ek görev ekleyebilirsin.\n\n{gorev_index + 1}️⃣ Yeni görevi yaz:")
+        return
+
+    # ─── GÜNLÜK SIFIRDAN OLUŞTUR ─────────────────────────────────────────────
+    if data == "gunluk_olustur":
         set_gunluk_yapilacaklar(context, [])
         reset_gunluk_tamamlanan(context)
         await query.edit_message_text(
@@ -1444,8 +1488,28 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown", reply_markup=yapilacak_ekle_buttons(0, is_haftalik=False))
         return
 
-    # ─── HAFTALIK DÜZENLEME ───
-    if data == "haftalik_olustur" or data == "haftalik_duzenle":
+    # ─── HAFTALIK DÜZENLE MENÜSÜ ─────────────────────────────────────────────
+    if data == "haftalik_duzenle_menu":
+        liste = get_haftalik_yapilacaklar(context)
+        mesaj = "📅 *HAFTALIK YAPILACAKLAR — DÜZENLE*\n\n"
+        for i, gorev in enumerate(liste, 1):
+            mesaj += f"{i}. {gorev}\n"
+        mesaj += "\n━━━━━━━━━━━━━━━━━━━━━━\nNe yapmak istersin?"
+        await query.edit_message_text(mesaj, parse_mode="Markdown", reply_markup=haftalik_duzenle_menu_buttons())
+        return
+
+    # ─── HAFTALIK MEVCUT LİSTEYE GÖREV EKLE ────────────────────────────────
+    if data == "haftalik_gorev_ekle_mevcut":
+        liste = get_haftalik_yapilacaklar(context)
+        gorev_index = len(liste)
+        waiting_key = f"yapilacak_hafta_{gorev_index}"
+        set_waiting_for(context, chat_id, waiting_key)
+        await query.edit_message_text(
+            f"📅 Mevcut haftalık listene ek görev ekleyebilirsin.\n\n{gorev_index + 1}️⃣ Yeni görevi yaz:")
+        return
+
+    # ─── HAFTALIK SIFIRDAN OLUŞTUR ───────────────────────────────────────────
+    if data == "haftalik_olustur":
         set_haftalik_yapilacaklar(context, [])
         reset_haftalik_tamamlanan(context)
         await query.edit_message_text(
@@ -1453,7 +1517,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown", reply_markup=yapilacak_ekle_buttons(0, is_haftalik=True))
         return
 
-    # ─── EZBER DÜZENLEME ───
+    # ─── EZBER DÜZENLEME ─────────────────────────────────────────────────────
     if data == "ezber_olustur" or data == "ezber_duzenle":
         set_waiting_for(context, chat_id, "hafta_ezber_plan")
         await query.edit_message_text(
@@ -1482,6 +1546,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(f"{soru_metinleri.get(soru_key, 'Cevabını yaz:')}\n\n💬 Cevabını yaz:")
         return
 
+    # ─── YAPILACAKLAR GÖREV EKLEME / KONTROL / DETAY ────────────────────────
     is_haftalik = data.startswith("hafta_") and not data.startswith("hafta_ezber")
     prefix = "hafta_" if is_haftalik else ""
 
@@ -1587,6 +1652,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await query.edit_message_text(mesaj, reply_markup=yapilacak_detay_buttons(liste, tamamlanan, is_haftalik))
         return
 
+    # ─── EVET / HAYIR BUTONLARI ───────────────────────────────────────────────
     parts = data.rsplit("_", 1)
     if len(parts) != 2 or parts[1] not in ("yes", "no"):
         return
@@ -1667,10 +1733,19 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             set_haftalik_yapilacaklar(context, liste)
         else:
             set_gunluk_yapilacaklar(context, liste)
-        mesaj = "📋 YAPILACAKLAR LİSTESİ\n\n"
+
+        # Güncel listeyi göster
+        tip = "📅 HAFTALIK" if is_haftalik else "📋 GÜNLÜK"
+        mesaj = f"{tip} YAPILACAKLAR LİSTESİ\n\n"
         for i, gorev in enumerate(liste, 1):
             mesaj += f"{i}. {gorev}\n"
-        await update.message.reply_text(mesaj, reply_markup=yapilacak_ekle_buttons(len(liste), is_haftalik))
+
+        # Mevcut listeye ekleme modundaysak özel butonları göster
+        # (gorev_index 0'dan başladığı için: len(liste)-1 == gorev_index ise ekleme modundayız)
+        await update.message.reply_text(
+            mesaj,
+            reply_markup=yapilacak_ekle_mevcut_buttons(len(liste), is_haftalik)
+        )
         clear_waiting_for(context, chat_id)
         return
 
@@ -1732,12 +1807,10 @@ async def lifespan(app: FastAPI):
     jq.run_daily(gece_farkindalik,               time(17, 30))
     jq.run_daily(gunluk_yapilacaklar_planla,     time(19, 30))
     jq.run_daily(daily_report,                   time(19, 40))
-    # Haftalık yapılacaklar Pazar günü (days=6), ezber de Pazar
     jq.run_daily(haftalik_yapilacaklar_planla,   time(16, 0),  days=(6,))
     jq.run_daily(haftalik_ezber_planla,          time(16, 30), days=(6,))
-    # Haftalık rapor Cumartesi akşamı (days=5) — haftayı kapatır
     jq.run_daily(haftalik_yapilacaklar_rapor,    time(17, 0),  days=(5,))
-    jq.run_daily(haftalik_diksiyon_hafta_guncelle, time(7, 0), days=(0,))  # Pazartesi
+    jq.run_daily(haftalik_diksiyon_hafta_guncelle, time(7, 0), days=(0,))
 
     telegram_app.add_handler(CallbackQueryHandler(button_handler))
     telegram_app.add_handler(CommandHandler("test", test_komutu))
@@ -1784,14 +1857,14 @@ async def telegram_webhook(request: Request):
 
 @app.get("/")
 async def root():
-    return {"status": "running", "bot": "active", "version": "4.1 - duzenleme butonu + diksiyon guncellendi", "message": "Telegram Bot çalışıyor! 🚀"}
+    return {"status": "running", "bot": "active", "version": "4.2 - mevcut listeye gorev ekleme", "message": "Telegram Bot çalışıyor! 🚀"}
 
 @app.get("/health")
 @app.head("/health")
 async def health():
-    return {"status": "healthy", "version": "4.1"}
+    return {"status": "healthy", "version": "4.2"}
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 10000))
-    print(f"🌐 Server başlatılıyor (v4.1) - Port: {port}")
+    print(f"🌐 Server başlatılıyor (v4.2) - Port: {port}")
     uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
